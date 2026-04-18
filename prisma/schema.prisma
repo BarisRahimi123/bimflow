@@ -1,0 +1,360 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ========== SPEC TABLES (Pre-populated) ==========
+
+model ToleranceSpec {
+  id             Int      @id @default(autoincrement())
+  discipline     String
+  elementType    String   @map("element_type")
+  tolerance      String
+  notes          String?
+  sourceDocument String   @default("A-9_Change_Management.pdf") @map("source_document")
+  sourcePage     Int?     @map("source_page")
+  sourceTable    String?  @map("source_table")
+  sourceRow      String?  @map("source_row")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  @@index([discipline])
+  @@map("tolerance_specs")
+}
+
+model PipeSpanSpec {
+  id                Int      @id @default(autoincrement())
+  material          String
+  service           String
+  pipeSize          String   @map("pipe_size")
+  temperature       Int
+  maxSpan           Decimal  @map("max_span")
+  sourceDocument    String   @default("40_05_19.01.pdf") @map("source_document")
+  sourcePage        Int?     @map("source_page")
+  sourceTable       String?  @map("source_table")
+  sourceDescription String?  @map("source_description")
+  createdAt         DateTime @default(now()) @map("created_at")
+
+  @@index([material, pipeSize, temperature])
+  @@map("pipe_span_specs")
+}
+
+model SGCorrectionFactor {
+  id               Int      @id @default(autoincrement())
+  material         String
+  specificGravity  Decimal  @map("specific_gravity")
+  correctionFactor Decimal  @map("correction_factor")
+  sourceDocument   String   @default("40_05_19.01.pdf") @map("source_document")
+  sourcePage       Int?     @map("source_page")
+  sourceTable      String?  @map("source_table")
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  @@index([material, specificGravity])
+  @@map("sg_correction_factors")
+}
+
+model LODRequirement {
+  id               Int      @id @default(autoincrement())
+  discipline       String
+  elementType      String   @map("element_type")
+  sizeThreshold    String?  @map("size_threshold")
+  includeInModel   Boolean  @map("include_in_model")
+  requiredMetadata String[] @map("required_metadata")
+  excludedItems    String[] @map("excluded_items")
+  sourceDocument   String   @default("A-7_LOD_Matrix.xlsx") @map("source_document")
+  sourceSheet      String?  @map("source_sheet")
+  sourceRows       String?  @map("source_rows")
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  @@index([discipline, elementType])
+  @@map("lod_requirements")
+}
+
+model LineClass {
+  id          Int      @id @default(autoincrement())
+  code        String   @unique
+  material    String
+  schedule    String?
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("line_classes")
+}
+
+model ServiceCode {
+  id              Int      @id @default(autoincrement())
+  code            String   @unique
+  service         String
+  typicalMaterial String?  @map("typical_material")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  @@map("service_codes")
+}
+
+// ========== APPLICATION TABLES ==========
+
+model Project {
+  id          String    @id @default(uuid())
+  name        String
+  description String?
+  status      String    @default("active")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  drawings    Drawing[]
+
+  @@map("projects")
+}
+
+model Drawing {
+  id                    String          @id @default(uuid())
+  projectId             String          @map("project_id")
+  project               Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  fileName              String          @map("file_name")
+  fileUrl               String          @map("file_url")
+  fileSize              Int?            @map("file_size")
+  mimeType              String?         @map("mime_type")
+  status                String          @default("uploaded")
+  pageCount             Int             @default(1) @map("page_count")
+  processingStartedAt   DateTime?       @map("processing_started_at")
+  processingCompletedAt DateTime?       @map("processing_completed_at")
+  errorMessage          String?         @map("error_message")
+  createdAt             DateTime        @default(now()) @map("created_at")
+  updatedAt             DateTime        @updatedAt @map("updated_at")
+  extractedLines        ExtractedLine[]
+
+  @@index([projectId])
+  @@index([status])
+  @@map("drawings")
+}
+
+model ExtractedLine {
+  id                 String          @id @default(uuid())
+  drawingId          String          @map("drawing_id")
+  drawing            Drawing         @relation(fields: [drawingId], references: [id], onDelete: Cascade)
+  lineNumber         String          @map("line_number")
+  serviceCode        String?         @map("service_code")
+  serviceName        String?         @map("service_name")
+  area               String?
+  size               String?
+  material           String?
+  lineClass          String?         @map("line_class")
+  connectedEquipment String[]        @map("connected_equipment")
+  valves             String[]
+  notes              String?
+  toleranceValue     String?         @map("tolerance_value")
+  toleranceCitation  Json?           @map("tolerance_citation")
+  maxSpan            Decimal?        @map("max_span")
+  spanCitation       Json?           @map("span_citation")
+  includeInModel     Boolean?        @map("include_in_model")
+  requiredMetadata   String[]        @map("required_metadata")
+  lodCitation        Json?           @map("lod_citation")
+  confidence         Decimal         @default(0)
+  verified           Boolean         @default(false)
+  verifiedBy         String?         @map("verified_by")
+  verifiedAt         DateTime?       @map("verified_at")
+  createdAt          DateTime        @default(now()) @map("created_at")
+  updatedAt          DateTime        @updatedAt @map("updated_at")
+  vendorProducts     VendorProduct[]
+
+  @@index([drawingId])
+  @@index([lineNumber])
+  @@map("extracted_lines")
+}
+
+model VendorProduct {
+  id             String         @id @default(uuid())
+  lineId         String?        @map("line_id")
+  line           ExtractedLine? @relation(fields: [lineId], references: [id], onDelete: Cascade)
+  vendor         String
+  productName    String?        @map("product_name")
+  modelNumber    String?        @map("model_number")
+  productUrl     String?        @map("product_url")
+  datasheetUrl   String?        @map("datasheet_url")
+  imageUrl       String?        @map("image_url")
+  specifications Json?
+  material       String?
+  pipeSize       String?        @map("pipe_size")
+  isPreferred    Boolean        @default(false) @map("is_preferred")
+  createdAt      DateTime       @default(now()) @map("created_at")
+  updatedAt      DateTime       @updatedAt @map("updated_at")
+
+  @@index([lineId])
+  @@index([material, pipeSize])
+  @@map("vendor_products")
+}
+
+// ========== PIPE SUPPORT CALCULATOR TABLES ==========
+
+// Hardware products for pipe supports
+model HardwareProduct {
+  id              Int      @id @default(autoincrement())
+  supportType     String   @map("support_type")     // hanger, guide, anchor, slide, riser_clamp, braced_hanger
+  mountingMethod  String   @map("mounting_method")  // rack, hanging, trapeze, floor, wall
+  materialType    String   @map("material_type")    // plastic, carbon_steel, stainless_steel, copper
+  isInsulated     Boolean  @default(false) @map("is_insulated")
+  
+  productName     String   @map("product_name")
+  manufacturer    String
+  partNumber      String?  @map("part_number")
+  assemblyDrawing String?  @map("assembly_drawing") // A-1, G-1, HGR-1, etc.
+  productUrl      String?  @map("product_url")
+  
+  sourceDocument  String   @default("40_05_19") @map("source_document")
+  sourceSection   String?  @map("source_section")
+  
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  @@index([supportType, mountingMethod, materialType])
+  @@map("hardware_products")
+}
+
+// Line class to material mapping
+model LineClassMapping {
+  id          Int      @id @default(autoincrement())
+  lineClass   String   @unique @map("line_class")
+  material    String
+  schedule    String?
+  pipeType    String?  @map("pipe_type") // pipe, tubing
+  description String?
+  
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("line_class_mappings")
+}
+
+// Guide distance rules from elbows
+model GuideDistanceRule {
+  id              Int      @id @default(autoincrement())
+  pipeType        String   @map("pipe_type")      // metal, plastic_small, plastic_large
+  runLengthMinMultiplier  Decimal  @map("run_length_min") // multiplier of max span
+  runLengthMaxMultiplier  Decimal  @map("run_length_max")
+  minDistanceMultiplier   Decimal  @map("min_distance")   // multiplier of max span
+  
+  sourceDocument  String   @default("40_05_19") @map("source_document")
+  sourceSection   String?  @map("source_section")
+  
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  @@map("guide_distance_rules")
+}
+
+// Location tolerance mapping
+model LocationTolerance {
+  id              Int      @id @default(autoincrement())
+  locationType    String   @unique @map("location_type") // subfab_rack, eor_rack, individual_run, utility_main
+  displayName     String   @map("display_name")
+  toleranceInches Decimal  @map("tolerance_inches")
+  fieldAccuracy   String   @map("field_accuracy") // ±1/4", ±1"
+  isCritical      Boolean  @default(false) @map("is_critical")
+  
+  sourceDocument  String   @default("A-9_Change_Management") @map("source_document")
+  sourcePage      Int?     @map("source_page")
+  
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  @@map("location_tolerances")
+}
+
+// Cached scraped hardware products (from Tavily + Firecrawl)
+model ScrapedHardwareCache {
+  id                String   @id @default(uuid())
+  
+  // Search key fields (for cache lookup)
+  materialType      String   @map("material_type")      // plastic, metal
+  supportFunction   String   @map("support_function")   // hanger, guide, anchor, riser_clamp, slide
+  pipeSize          String   @map("pipe_size")
+  
+  // Scraped product data
+  vendor            String
+  productName       String   @map("product_name")
+  partNumber        String?  @map("part_number")
+  productUrl        String   @map("product_url")
+  imageUrl          String?  @map("image_url")
+  datasheetUrl      String?  @map("datasheet_url")
+  assemblyDrawing   String?  @map("assembly_drawing")
+  description       String?
+  specifications    Json?
+  isPreferred       Boolean  @default(false) @map("is_preferred")
+  searchConfidence  Decimal  @default(0.5) @map("search_confidence")
+  
+  // Cache metadata
+  scrapedAt         DateTime @default(now()) @map("scraped_at")
+  expiresAt         DateTime @map("expires_at")
+  hitCount          Int      @default(0) @map("hit_count")
+  lastAccessedAt    DateTime @default(now()) @map("last_accessed_at")
+  
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  @@unique([materialType, supportFunction, pipeSize, productUrl])
+  @@index([materialType, supportFunction, pipeSize])
+  @@index([expiresAt])
+  @@map("scraped_hardware_cache")
+}
+
+// Saved support calculations
+model SupportCalculation {
+  id                  String   @id @default(uuid())
+  lineId              String?  @map("line_id") // Optional link to extracted line
+  
+  // Input Parameters
+  material            String
+  lineClass           String?  @map("line_class")
+  pipeSize            String   @map("pipe_size")
+  service             String   // water, vapor
+  temperature         Int
+  specificGravity     Decimal  @map("specific_gravity")
+  pipeLength          Decimal  @map("pipe_length")
+  orientation         String   // horizontal, vertical
+  mountingMethod      String   @map("mounting_method") // rack, hanging, trapeze, floor, wall
+  locationType        String   @map("location_type")
+  isIndoor            Boolean  @map("is_indoor")
+  isCorrosive         Boolean  @map("is_corrosive")
+  isInsulated         Boolean  @map("is_insulated")
+  
+  // Condition flags
+  hasElbow            Boolean  @default(false) @map("has_elbow")
+  hasInlineComponent  Boolean  @default(false) @map("has_inline_component")
+  componentWeight     String?  @map("component_weight") // light, medium, heavy
+  hasFlexibleCoupling Boolean  @default(false) @map("has_flexible_coupling")
+  isEquipmentConnection Boolean @default(false) @map("is_equipment_connection")
+  isBranchPipe        Boolean  @default(false) @map("is_branch_pipe")
+  isDoubleWall        Boolean  @default(false) @map("is_double_wall")
+  
+  // Calculated Results
+  baseMaxSpan         Decimal  @map("base_max_span")
+  adjustedSpan        Decimal  @map("adjusted_span")
+  guideSpacing        Decimal  @map("guide_spacing")
+  numberOfSpans       Int      @map("number_of_spans")
+  numberOfSupports    Int      @map("number_of_supports")
+  
+  // Support Types
+  deadweightType      String   @map("deadweight_type")
+  lateralType         String   @map("lateral_type")
+  axialType           String?  @map("axial_type")
+  
+  // Tolerance
+  toleranceInches     Decimal  @map("tolerance_inches")
+  fieldAccuracy       String   @map("field_accuracy")
+  
+  // Flags
+  cushAClampEligible  Boolean  @map("cush_a_clamp_eligible")
+  requiresContinuous  Boolean  @default(false) @map("requires_continuous")
+  
+  // Hardware recommendations (JSON)
+  hardware            Json?
+  
+  // Warnings and notes
+  warnings            String[]
+  
+  // Citations (JSON)
+  citations           Json
+  
+  createdAt           DateTime @default(now()) @map("created_at")
+
+  @@index([lineId])
+  @@map("support_calculations")
+}
