@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -31,6 +32,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
+const PDFViewer = dynamic(() => import("@/components/PDFViewer"), { ssr: false });
+
 interface Step {
   id: string;
   title: string;
@@ -41,6 +44,8 @@ interface Step {
   toolRoute?: string;
   toolLabel?: string;
   checklist?: string[];
+  checklistPages?: Record<number, number>; // checklist index → PDF page number
+  checklistSearchTexts?: Record<number, string>; // checklist index → text to search + highlight in PDF
 }
 
 interface Phase {
@@ -74,6 +79,13 @@ const PHASES: Phase[] = [
           'Set all parameters as Instance with "Values can vary by group instance"',
           'Verify params appear on a test element in the Properties panel',
         ],
+        checklistSearchTexts: {
+          0: 'BIM 360',
+          1: 'Shared Parameters',
+          2: 'Parameter Groups',
+          3: 'Values can vary by group',
+          4: 'Properties',
+        },
       },
       {
         id: 's2',
@@ -91,6 +103,15 @@ const PHASES: Phase[] = [
           'If modeling in non-Autodesk software, provide DWGs aligned to project coordinate system (CPEP 3.1.3.1)',
           'Provide any object enablers used to Contractor (CPEP 3.1.2)',
         ],
+        checklistSearchTexts: {
+          0: 'authoring software',
+          1: 'campus local',
+          2: 'survey point',
+          3: 'Imperial',
+          4: 'rounding',
+          5: 'non-Autodesk',
+          6: 'object enabler',
+        },
       },
       {
         id: 's3',
@@ -109,6 +130,16 @@ const PHASES: Phase[] = [
           'Upload CM NWCs + source files (DWG, RVT) to applicable BIM 360 folders (CPEP 4.2.1.2)',
           'Divide CMs by level and coordination model sectors (CPEP 4.5.4)',
         ],
+        checklistSearchTexts: {
+          0: 'type designator',
+          1: 'naming standard',
+          2: 'NDA',
+          3: 'Newforma Konekt',
+          4: 'Navisworks',
+          5: 'central model',
+          6: 'source files',
+          7: 'coordination model sectors',
+        },
       },
       {
         id: 's4',
@@ -125,6 +156,14 @@ const PHASES: Phase[] = [
           'Pre-populate IFF tag metadata at the object geometry level (CPEP 7.3.2.1)',
           'Remove all design options before IFC submission',
         ],
+        checklistSearchTexts: {
+          0: 'workset',
+          1: 'Existing Condition',
+          2: 'Appendix 3',
+          3: 'DM geometry',
+          4: 'IFF tag metadata',
+          5: 'design options',
+        },
       },
     ],
   },
@@ -153,6 +192,17 @@ const PHASES: Phase[] = [
           'Field walk: you must walk proposed routing in existing footprints to verify clash-free before IFF or installation (CPEP 4.8.1)',
           'Existing model dimensions require field validation before modeling, fabrication, or installation (CPEP 4.6.1.1)',
         ],
+        checklistSearchTexts: {
+          0: 'Design Model',
+          1: 'document hierarchy',
+          2: 'Federated Model',
+          3: 'NWD',
+          4: '2x per week',
+          5: 'routing priority',
+          6: 'Monumental',
+          7: 'field walk',
+          8: 'field validation',
+        },
       },
       {
         id: 's6',
@@ -176,6 +226,21 @@ const PHASES: Phase[] = [
           'Assign real material codes from spec list -- never use generic materials',
           'Use shared project coordinates for all equipment -- never unlinked coordinates',
         ],
+        checklistSearchTexts: {
+          0: 'fabrication accuracy',
+          1: 'fittings',
+          2: 'valve',
+          3: 'instruments',
+          4: 'pipe support',
+          5: 'insulation thickness',
+          6: 'slope',
+          7: 'maintenance clearance',
+          8: '3D solid',
+          9: 'assemblies',
+          10: 'Tag ID',
+          11: 'material code',
+          12: 'shared project coordinates',
+        },
         toolRoute: '/calculator',
         toolLabel: 'Pipe Support Calculator',
       },
@@ -243,6 +308,11 @@ const PHASES: Phase[] = [
           'Check if pipe is indoor or outdoor -- affects Cush-a-Clamp eligibility',
           'Identify insulation requirements and thickness -- you MUST include this in pipe OD',
         ],
+        checklistSearchTexts: {
+          6: 'pipe stress',       // sec 1.2: pipe stress engineering scope
+          7: '316L',              // sec 2.3.A: corrosive area → 316/316L SS
+          8: 'Cush-a-Clamp',     // sec 1.5.K: indoor/outdoor Cush-a-Clamp rule
+        },
         toolRoute: '/upload',
         toolLabel: 'Extract from P&ID',
       },
@@ -266,6 +336,24 @@ const PHASES: Phase[] = [
           'Calculate guide spacing: 2x the deadweight span (40 05 19, App 1)',
           'If span < 2.5 ft: use continuous support instead of individual supports (40 05 19.01)',
         ],
+        checklistPages: {
+          0: 2, // span lookup table
+          1: 3, // SG correction table
+          2: 5, // direction change rules
+          3: 5,
+          4: 5,
+          5: 6, // plastic fitting rule
+          8: 4, // continuous support note
+        },
+        checklistSearchTexts: {
+          0: 'Maximum Support',
+          1: 'Specific Gravity',
+          2: 'Direction Change',
+          3: 'in-line component',
+          4: 'in-line component',
+          5: '18 inches',          // sec 1.5.K: plastic fitting 18" rule
+          8: 'continuous support',
+        },
       },
       {
         id: 's12',
@@ -294,6 +382,42 @@ const PHASES: Phase[] = [
           'FLEXIBLE COUPLING: Independent support on BOTH sides, with tie-rods (40 05 19, 1.5.I)',
           'EQUIPMENT CONNECTION: No anchor on the connection run (40 05 19, 1.5.J)',
         ],
+        checklistPages: {
+          0: 8,  // anchor placement — App 1
+          1: 8,  // guide spacing
+          2: 9,  // guide from elbow rules
+          3: 9,
+          4: 10,
+          5: 10,
+          6: 11,
+          7: 11,
+          8: 8,  // hangers
+          9: 12, // riser clamp
+          10: 12,
+          11: 13, // branch support
+          12: 13,
+          13: 14, // expansion loop
+          14: 7,  // 1.5.I flexible coupling
+          15: 7,  // 1.5.J equipment connection
+        },
+        checklistSearchTexts: {
+          0: 'ANCHOR',
+          1: 'GUIDE',
+          2: 'elbow',
+          3: 'elbow',
+          4: 'elbow',
+          5: 'elbow',
+          6: 'elbow',
+          7: 'elbow',
+          8: 'HANGER',
+          9: 'RISER',
+          10: 'riser guide',
+          11: 'BRANCH',
+          12: 'BRANCH',
+          13: 'expansion loop',
+          14: 'flexible coupling',    // sec 1.5.I: flexible coupling independent support
+          15: 'equipment nozzle',    // sec 1.5.J: no anchor on equipment connection run
+        },
       },
       {
         id: 's13',
@@ -319,6 +443,20 @@ const PHASES: Phase[] = [
           'CORROSIVE AREA: All hardware must be 316 or 316L stainless steel -- no carbon steel (40 05 19, 2.3.A)',
           'Verify all hardware is from approved manufacturer list: Anvil, PHD, Cooper B-Line, Georg Fischer, ISAT, Carpenter & Patterson (40 05 19, 2.1)',
         ],
+        checklistSearchTexts: {
+          0: 'Clevis Hanger',       // sec 2.3.C.2: GF Stress Less Clevis Hanger
+          1: 'Pipe Guide',          // sec 2.3.C.4: GF Stress Less Pipe Guide
+          2: 'Clamp Fixpoint',      // sec 2.3.C.5: GF Stress Less Clamp Fixpoint
+          3: 'Pipe Slide',          // sec 2.3.C.3: GF Stress Less Pipe Slides
+          4: 'riser clamp',         // sec 2.3.C.6: riser clamp at top
+          5: 'metal contact',       // sec 1.5.K: no metal in direct contact
+          6: 'Cush-a-Clamp',        // sec 1.5.K: no friction anchors
+          7: 'metal valve',         // sec 1.5.K: support metal valves independently
+          9: 'dielectric',          // sec 2.2: dielectric insulation requirement
+          10: 'Cush-a-Clamp',       // App 1: indoor/metal/2" Cush-a-Clamp rule
+          11: '316L',               // sec 2.3.A: corrosive area 316/316L SS
+          12: 'approved manufacturer', // sec 2.1: approved manufacturer list
+        },
       },
       {
         id: 's14',
@@ -345,6 +483,24 @@ const PHASES: Phase[] = [
           'Verify no interference with other trades visible in your local view',
           'Verify assembly matches Appendix 3 reference drawings (A-1, G-1, S-1, HGR-1, R-1)',
         ],
+        checklistSearchTexts: {
+          0: 'INT_PKG_Name',
+          1: 'INT_SSID',
+          2: 'Tag ID',
+          3: 'System Service',
+          4: 'Material',
+          5: 'Nominal Size',
+          6: 'Elevation',
+          7: 'IFF Status',
+          8: 'insulation',
+          9: 'valve handle',
+          10: 'material code',
+          11: 'shared project coordinates',
+          12: 'max span',
+          13: 'thermal expansion',
+          14: 'interference',
+          15: 'Appendix 3',
+        },
       },
     ],
   },
@@ -371,6 +527,15 @@ const PHASES: Phase[] = [
           'Only bring unresolvable issues to coordination meetings (CPEP 6.5)',
           'Follow DM routing whenever possible -- deviations require A-9 tolerance check or RFI (CPEP 6.2)',
         ],
+        checklistSearchTexts: {
+          0: 'shared coordinates',
+          1: 'Federated Model',
+          2: 'clash test',
+          3: 'Newforma Konekt',
+          4: 'resolve clashes',
+          5: 'coordination meeting',
+          6: 'DM routing',
+        },
       },
       {
         id: 's16',
@@ -422,6 +587,14 @@ const PHASES: Phase[] = [
           'Divide CM files by level and coordination model sectors (CPEP 4.5.4)',
           'Include source files alongside NWC files (CPEP 4.5.3)',
         ],
+        checklistSearchTexts: {
+          0: 'source file',
+          1: 'DWG',
+          2: '2x per week',
+          3: '1 day prior',
+          4: 'coordination model sectors',
+          5: 'NWC',
+        },
       },
       {
         id: 's20',
@@ -439,6 +612,15 @@ const PHASES: Phase[] = [
           'If DM routing is not possible, check A-9 tolerances first, then RFI if outside tolerance (CPEP 6.2)',
           'Use Newforma Konekt for all issue tracking and communication (CPEP 4.3)',
         ],
+        checklistSearchTexts: {
+          0: 'coordination meeting',
+          1: 'field team',
+          2: 'resolve',
+          3: 'unresolvable',
+          4: 'DM routing',
+          5: 'RFI',
+          6: 'Newforma Konekt',
+        },
       },
       {
         id: 's21',
@@ -463,6 +645,22 @@ const PHASES: Phase[] = [
           'IFF file name format: LL-YY_IFF-BBB-AAA-XXXX_YYYY-MM-DD (CPEP 7.5.2)',
           'After approval: mark objects as "Approved IFF" in model parameters, lock routing layers, export final NWD',
         ],
+        checklistSearchTexts: {
+          0: 'IFF tag metadata',
+          1: 'Procore',
+          2: 'BIM 360',
+          3: '2 IFF submissions',
+          4: 'conceptual review',
+          5: 'technical review',
+          6: 'CONDITIONAL',
+          7: 'archiving',
+          8: 'Re-IFF',
+          9: 'P6 schedule',
+          10: 'Navisworks model',
+          11: 'source',
+          12: 'file name format',
+          13: 'Approved IFF',
+        },
       },
     ],
   },
@@ -488,6 +686,14 @@ const PHASES: Phase[] = [
           'Any field routing changes must be updated in CM and re-IFF submitted (CPEP 8.1.2)',
           'Walk proposed routing in existing footprints to verify clash-free before installation (CPEP 4.8.1)',
         ],
+        checklistSearchTexts: {
+          0: 'Model to Field',
+          1: 'field accuracy',
+          2: 'critical areas',
+          3: 'field changes',
+          4: 'Re-IFF',
+          5: 'field walk',
+        },
       },
       {
         id: 's23',
@@ -506,6 +712,16 @@ const PHASES: Phase[] = [
           'Final payment withheld until record models are compliant and approved (CPEP 9.1.5)',
           'Start meeting closeout requirements early -- do not wait until the end (CPEP 9.1)',
         ],
+        checklistSearchTexts: {
+          0: 'clash-free',
+          1: 'naming standard',
+          2: 'Newforma Konekt',
+          3: 're-IFF',
+          4: 'BIM 360',
+          5: 'field-routed',
+          6: 'final payment',
+          7: 'closeout',
+        },
       },
     ],
   },
@@ -559,7 +775,41 @@ export default function GuidePage() {
   const [activePhaseIndex, setActivePhaseIndex] = useState(0);
   const [activeStepIndex, setActiveStepIndex] = useState(0);
   const [viewingDocId, setViewingDocId] = useState<string | null>(null);
+  const [viewingDocPage, setViewingDocPage] = useState<number>(1);
+  const [viewingSearchText, setViewingSearchText] = useState<string | undefined>(undefined);
   const [isViewerExpanded, setIsViewerExpanded] = useState(false);
+  const hoverTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Clear hover timer on unmount
+  useEffect(() => () => { if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current); }, []);
+
+  const openDoc = (docId: string, page: number = 1, searchText?: string) => {
+    if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
+    setViewingDocId(docId);
+    setViewingDocPage(page);
+    setViewingSearchText(searchText); // always set (clears stale highlight when no searchText)
+  };
+
+  const closeDoc = () => {
+    if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
+    setViewingDocId(null);
+    setViewingDocPage(1);
+    setViewingSearchText(undefined);
+    setIsViewerExpanded(false);
+  };
+
+  const handleCheckItemHover = (docId: string, page?: number, searchText?: string) => {
+    if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
+    hoverTimerRef.current = setTimeout(() => {
+      setViewingDocId(docId);
+      if (page !== undefined) setViewingDocPage(page);
+      if (searchText !== undefined) setViewingSearchText(searchText);
+    }, 350);
+  };
+
+  const handleCheckItemLeave = () => {
+    if (hoverTimerRef.current) clearTimeout(hoverTimerRef.current);
+  };
   const { completed, toggle, notes, updateNote, attachments, addAttachment } = usePlaybookData();
 
   const totalSteps = PHASES.reduce((sum, p) => sum + p.steps.length, 0);
@@ -658,7 +908,7 @@ export default function GuidePage() {
             {(activeStep.documentId || activeStep.toolRoute) && (
               <div className="flex flex-wrap items-center gap-3 mb-8">
                 {activeStep.documentId && (
-                  <button onClick={() => setViewingDocId(activeStep.documentId!)} className={cn("inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium transition-all", viewingDocId === activeStep.documentId ? "bg-slate-900 text-white shadow-md" : "bg-white border border-slate-200 shadow-sm hover:shadow-md text-slate-700")}>
+                  <button onClick={() => openDoc(activeStep.documentId!)} className={cn("inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium transition-all", viewingDocId === activeStep.documentId ? "bg-slate-900 text-white shadow-md" : "bg-white border border-slate-200 shadow-sm hover:shadow-md text-slate-700")}>
                     <FileText className="w-4 h-4" /> View: {activeStep.source}
                   </button>
                 )}
@@ -688,19 +938,63 @@ export default function GuidePage() {
                     {activeStep.checklist!.map((item, i) => {
                       const checkKey = `${activeStep.id}-check-${i}`;
                       const isChecked = completed.has(checkKey);
+                      const pageRef = activeStep.checklistPages?.[i];
+                      const searchRef = activeStep.checklistSearchTexts?.[i];
+                      const hasDocRef = (pageRef !== undefined || searchRef !== undefined) && activeStep.documentId;
+                      const isActiveHighlight =
+                        viewingDocId === activeStep.documentId &&
+                        searchRef !== undefined &&
+                        viewingSearchText === searchRef;
                       return (
-                        <button
+                        <div
                           key={i}
-                          onClick={() => toggle(checkKey)}
-                          className="w-full flex items-start gap-3 py-2.5 text-left transition-colors group"
-                        >
-                          {isChecked ? (
-                            <CheckCircle2 className="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
-                          ) : (
-                            <Circle className="w-5 h-5 text-slate-300 group-hover:text-blue-400 flex-shrink-0 mt-0.5 transition-colors" />
+                          onMouseEnter={() =>
+                            hasDocRef
+                              ? handleCheckItemHover(activeStep.documentId!, pageRef, searchRef)
+                              : undefined
+                          }
+                          onMouseLeave={hasDocRef ? handleCheckItemLeave : undefined}
+                          className={cn(
+                            "flex items-start gap-3 py-2.5 rounded-lg px-1 -mx-1 group transition-colors",
+                            isActiveHighlight && "bg-yellow-50 dark:bg-yellow-900/10",
+                            hasDocRef && !isActiveHighlight && "hover:bg-slate-50 dark:hover:bg-slate-800/30",
                           )}
-                          <span className={cn("text-sm leading-relaxed", isChecked ? "text-slate-400 line-through" : "text-slate-700 dark:text-slate-300")}>{item}</span>
-                        </button>
+                        >
+                          <button
+                            onClick={() => toggle(checkKey)}
+                            className="flex-shrink-0 mt-0.5 focus:outline-none"
+                            aria-label={isChecked ? "Uncheck" : "Check"}
+                          >
+                            {isChecked ? (
+                              <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+                            ) : (
+                              <Circle className="w-5 h-5 text-slate-300 group-hover:text-blue-400 transition-colors" />
+                            )}
+                          </button>
+                          <button
+                            onClick={() => toggle(checkKey)}
+                            className="flex-1 text-left focus:outline-none"
+                          >
+                            <span className={cn("text-sm leading-relaxed", isChecked ? "text-slate-400 line-through" : "text-slate-700 dark:text-slate-300")}>{item}</span>
+                          </button>
+                          {hasDocRef && (
+                            <button
+                              onClick={() => openDoc(activeStep.documentId!, pageRef ?? 1, searchRef)}
+                              title={searchRef ? `Highlight "${searchRef}" in reference` : `Jump to page ${pageRef}`}
+                              className={cn(
+                                "flex-shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold transition-colors",
+                                isActiveHighlight
+                                  ? "bg-yellow-400 text-yellow-900"
+                                  : viewingDocId === activeStep.documentId && viewingDocPage === pageRef && !searchRef
+                                  ? "bg-blue-600 text-white"
+                                  : "bg-blue-50 dark:bg-blue-900/30 text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-800/50"
+                              )}
+                            >
+                              <FileText className="w-3 h-3" />
+                              {pageRef ? `p.${pageRef}` : '§'}
+                            </button>
+                          )}
+                        </div>
                       );
                     })}
                   </div>
@@ -736,15 +1030,32 @@ export default function GuidePage() {
 
         {/* Document Viewer Panel */}
         {viewingDocId && (
-          <div className={cn("border-l bg-slate-100 dark:bg-slate-950 flex flex-col", isViewerExpanded ? "absolute inset-0 z-20" : "w-full lg:w-1/2 lg:relative absolute inset-0 z-20 lg:z-0")}>
+          <div className={cn("border-l bg-slate-100 dark:bg-slate-950 flex flex-col", isViewerExpanded ? "absolute inset-0 z-20" : "w-full lg:w-2/5 lg:relative absolute inset-0 z-20 lg:z-0")}>
             <div className="h-12 px-4 flex items-center justify-between bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex-shrink-0">
-              <span className="text-sm font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2"><FileText className="w-4 h-4 text-blue-500" /> Reference Document</span>
+              <span className="text-sm font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2 min-w-0">
+                <FileText className="w-4 h-4 text-blue-500 flex-shrink-0" />
+                Reference Document
+                {viewingSearchText ? (
+                  <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-yellow-100 text-yellow-800 truncate max-w-[120px]">
+                    ↑ {viewingSearchText}
+                  </span>
+                ) : viewingDocPage > 1 ? (
+                  <span className="text-xs font-normal text-slate-400">— p.{viewingDocPage}</span>
+                ) : null}
+              </span>
               <div className="flex items-center gap-1">
                 <button onClick={() => setIsViewerExpanded(!isViewerExpanded)} className="p-2 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors hidden lg:block">{isViewerExpanded ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}</button>
-                <button onClick={() => { setViewingDocId(null); setIsViewerExpanded(false); }} className="p-2 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"><X className="w-4 h-4" /></button>
+                <button onClick={closeDoc} className="p-2 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"><X className="w-4 h-4" /></button>
               </div>
             </div>
-            <div className="flex-1 relative"><iframe src={`/api/documents/${viewingDocId}`} className="absolute inset-0 w-full h-full border-none" title="Document Viewer" /></div>
+            <div className="flex-1 relative min-h-0">
+              <PDFViewer
+                documentId={viewingDocId!}
+                page={viewingDocPage}
+                searchText={viewingSearchText}
+                className="absolute inset-0 w-full h-full"
+              />
+            </div>
           </div>
         )}
       </div>
