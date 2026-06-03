@@ -6,7 +6,7 @@ import { Anchor, Circle, ArrowRight } from "lucide-react";
 
 interface AnchorNodeData {
   label?: string;
-  anchorType?: "fixed" | "directional" | "continue";
+  anchorType?: "fixed" | "directional" | "continue" | string;
   isTemporary?: boolean;
 }
 

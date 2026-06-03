@@ -55,8 +55,13 @@ prisma/
 | `POST /api/drawings` | Create drawing record (uses Supabase RPC `create_pidflow_drawing`) |
 | `POST /api/drawings/[id]/process` | Trigger Claude Vision extraction |
 | `GET /api/drawings/[id]/process` | Poll extraction status |
+| `PATCH /api/drawings/[id]/verify` | Verify/update an extracted line |
 | `POST /api/calculator` | Run span/support calculation — returns `CalculatorOutput` |
 | `POST /api/upload` | Upload P&ID to S3, returns presigned URL |
+| `GET /api/projects` / `POST` | List or create projects |
+| `GET /api/projects/[id]` | Get project with drawings |
+| `GET /api/documents/[id]` | Serve a BIM reference document from local filesystem |
+| `GET /api/specs` | Query spec tables (tolerance, span, LOD) |
 
 ## Database (Prisma + Supabase)
 
@@ -70,6 +75,17 @@ Two categories of tables:
 - `GuideDistanceRule`, `SGCorrectionFactor`, `LODRequirement`, `LineClass`, `ServiceCode`
 
 **Application tables**: `Project`, `Drawing`, `ExtractedLine`, `VendorProduct`, `SupportCalculation`, `ScrapedHardwareCache`
+
+## Resources / Document Browser
+
+`lib/resources/` serves 100+ BIM reference documents from the **local filesystem** (not S3).
+
+- **`manifest.ts`** — hardcoded map of `id → relative path` within `pidflow/documents/`. All paths are relative to `documents/` at `process.cwd()`. The manifest is the only place to add/remove documents.
+- **`categories.ts`** — groups document IDs into display categories for the browser UI
+- `app/api/documents/[id]/route.ts` reads the manifest, resolves the absolute path, checks the file exists and is non-zero, then streams it with the correct MIME type
+- `app/resources/` and `app/resources/[slug]/` are the browser pages; `app/guide/` renders the markdown guide
+
+Documents are served directly from disk — there is no upload or CDN step for reference documents.
 
 ## Core Domain: Calculator Engine
 

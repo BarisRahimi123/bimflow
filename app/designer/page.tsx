@@ -627,13 +627,13 @@ function DesignerCanvas() {
       <header className="h-14 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-4 flex-shrink-0">
         <div className="flex items-center gap-4">
           <Link 
-            href="/" 
+            href="/home" 
             className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
           >
             <ArrowLeft className="w-5 h-5 text-slate-600 dark:text-slate-400" />
           </Link>
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
               <LayoutGrid className="w-4 h-4 text-white" />
             </div>
             <div>
@@ -691,7 +691,7 @@ function DesignerCanvas() {
       
       {/* Drawing Mode Indicator */}
       {isDrawing && (
-        <div className="absolute top-36 left-1/2 -translate-x-1/2 z-20 bg-indigo-600 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg flex items-center gap-3">
+        <div className="absolute top-36 left-1/2 -translate-x-1/2 z-20 bg-primary text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg flex items-center gap-3">
           <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
           <span>Drawing pipe • Click to set direction • <strong>ENTER</strong> to finish • <strong>ESC</strong> to cancel</span>
         </div>
@@ -726,7 +726,7 @@ function DesignerCanvas() {
             fitView
             snapToGrid
             snapGrid={[15, 15]}
-            connectionLineStyle={{ stroke: '#6366f1', strokeWidth: 2 }}
+            connectionLineStyle={{ stroke: 'hsl(var(--primary))', strokeWidth: 2 }}
             defaultEdgeOptions={{ type: 'pipe' }}
             className="bg-white dark:bg-slate-900"
             proOptions={{ hideAttribution: true }}
@@ -761,8 +761,8 @@ function DesignerCanvas() {
             {nodes.length === 0 && (
               <Panel position="top-center" className="mt-20">
                 <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 p-8 text-center max-w-lg">
-                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center">
-                    <LayoutGrid className="w-8 h-8 text-indigo-600 dark:text-indigo-400" />
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
+                    <LayoutGrid className="w-8 h-8 text-primary" />
                   </div>
                   <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">
                     Draw Your Pipe Run
@@ -810,8 +810,8 @@ function DesignerCanvas() {
         </div>
         
         {/* Right Panel */}
-        <DesignerPanel 
-          selectedNode={selectedNode}
+        <DesignerPanel
+          selectedNode={selectedNode ?? null}
           onUpdateNode={updateNodeData}
           defaults={defaults}
           environment={environment}
@@ -833,7 +833,7 @@ function DesignerCanvas() {
               onClick={() => setActiveTab(tab.id as typeof activeTab)}
               className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors flex items-center gap-1.5 ${
                 activeTab === tab.id
-                  ? "bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300"
+                  ? "bg-primary/10 text-primary"
                   : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
               }`}
             >

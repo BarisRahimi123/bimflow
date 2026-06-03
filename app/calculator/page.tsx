@@ -85,7 +85,7 @@ function SupportTypeLabel({ type }: { type: string }) {
       <span className="capitalize">{displayName}</span>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Info className="w-3.5 h-3.5 text-slate-400 hover:text-blue-500 cursor-help transition-colors" />
+          <Info className="w-3.5 h-3.5 text-muted-foreground hover:text-brand cursor-help transition-colors" />
         </TooltipTrigger>
         <TooltipContent side="top" className="max-w-xs text-xs leading-relaxed">
           {explanation}
@@ -99,7 +99,7 @@ function SupportTypeLabel({ type }: { type: string }) {
 function Card({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
     <div className={cn(
-      "bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-2xl border border-slate-200/50 dark:border-slate-700/50 shadow-lg shadow-slate-200/20 dark:shadow-slate-900/30",
+      "bg-card rounded-2xl border border-border shadow-sm",
       className
     )}>
       {children}
@@ -125,8 +125,8 @@ function Select({
 }) {
   return (
     <div className="space-y-2">
-      <label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
-        {Icon && <Icon className="w-4 h-4 text-slate-400" />}
+      <label className="text-sm font-medium text-foreground flex items-center gap-2">
+        {Icon && <Icon className="w-4 h-4 text-muted-foreground" />}
         {label}
       </label>
       <div className="relative">
@@ -135,10 +135,10 @@ function Select({
           onChange={(e) => onChange(e.target.value)}
           className={cn(
             "w-full h-12 px-4 rounded-xl appearance-none cursor-pointer",
-            "bg-slate-50/80 dark:bg-slate-800/80 backdrop-blur-sm",
-            "border border-slate-200 dark:border-slate-700",
-            "text-slate-900 dark:text-slate-100",
-            "focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500",
+            "bg-secondary",
+            "border border-border",
+            "text-foreground",
+            "focus:outline-none focus:ring-2 focus:ring-brand/50 focus:border-brand",
             "transition-all duration-200"
           )}
         >
@@ -149,7 +149,7 @@ function Select({
             </option>
           ))}
         </select>
-        <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+        <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
       </div>
     </div>
   );
@@ -181,8 +181,8 @@ function Input({
 }) {
   return (
     <div className="space-y-2">
-      <label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
-        {Icon && <Icon className="w-4 h-4 text-slate-400" />}
+      <label className="text-sm font-medium text-foreground flex items-center gap-2">
+        {Icon && <Icon className="w-4 h-4 text-muted-foreground" />}
         {label}
       </label>
       <div className="relative">
@@ -196,16 +196,16 @@ function Input({
           step={step}
           className={cn(
             "w-full h-12 px-4 rounded-xl",
-            "bg-slate-50/80 dark:bg-slate-800/80 backdrop-blur-sm",
-            "border border-slate-200 dark:border-slate-700",
-            "text-slate-900 dark:text-slate-100",
-            "focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500",
+            "bg-secondary",
+            "border border-border",
+            "text-foreground",
+            "focus:outline-none focus:ring-2 focus:ring-brand/50 focus:border-brand",
             "transition-all duration-200",
             unit && "pr-12"
           )}
         />
         {unit && (
-          <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-slate-400">
+          <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
             {unit}
           </span>
         )}
@@ -229,11 +229,11 @@ function Toggle({
   return (
     <label className="flex items-center justify-between gap-4 cursor-pointer group">
       <div>
-        <span className="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-slate-100 transition-colors">
+        <span className="text-sm font-medium text-foreground group-hover:text-foreground transition-colors">
           {label}
         </span>
         {description && (
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{description}</p>
+          <p className="text-xs text-muted-foreground mt-0.5">{description}</p>
         )}
       </div>
       <div
@@ -241,8 +241,8 @@ function Toggle({
         className={cn(
           "relative w-12 h-7 rounded-full transition-all duration-300 ease-out",
           checked
-            ? "bg-gradient-to-r from-blue-500 to-blue-600"
-            : "bg-slate-200 dark:bg-slate-700"
+            ? "bg-brand"
+            : "bg-muted"
         )}
       >
         <div
@@ -282,27 +282,27 @@ function MountingMethodCard({
         "p-4 rounded-xl text-left transition-all duration-200",
         "border-2",
         selected
-          ? "border-blue-500 bg-blue-50/50 dark:bg-blue-900/20"
-          : "border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 bg-white/50 dark:bg-slate-800/50"
+          ? "border-brand bg-brand/5"
+          : "border-border hover:border-foreground/30 bg-card"
       )}
     >
       <div className="flex items-start gap-3">
         <div className={cn(
           "p-2 rounded-lg",
           selected
-            ? "bg-blue-500 text-white"
-            : "bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300"
+            ? "bg-brand text-white"
+            : "bg-muted text-muted-foreground"
         )}>
           <Icon className="w-5 h-5" />
         </div>
         <div>
           <h4 className={cn(
             "font-semibold text-sm",
-            selected ? "text-blue-700 dark:text-blue-300" : "text-slate-700 dark:text-slate-300"
+            selected ? "text-brand" : "text-foreground"
           )}>
             {option.label}
           </h4>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+          <p className="text-xs text-muted-foreground mt-0.5">
             {option.description}
           </p>
         </div>
@@ -326,9 +326,9 @@ function ProductCard({ product, type }: { product: any; type: string }) {
   
   const typeColors: Record<string, { bg: string; border: string; text: string }> = {
     'Hanger/Support': { 
-      bg: 'bg-blue-50 dark:bg-blue-900/20', 
-      border: 'border-blue-200 dark:border-blue-800',
-      text: 'text-blue-700 dark:text-blue-300'
+      bg: 'bg-brand/5', 
+      border: 'border-brand/20',
+      text: 'text-brand'
     },
     'Guide': { 
       bg: 'bg-emerald-50 dark:bg-emerald-900/20', 
@@ -347,11 +347,11 @@ function ProductCard({ product, type }: { product: any; type: string }) {
   return (
     <div className={cn(
       "rounded-2xl border-2 overflow-hidden transition-all hover:shadow-lg",
-      product.isPreferred ? colors.border : "border-slate-200 dark:border-slate-700",
-      product.isPreferred ? colors.bg : "bg-white dark:bg-slate-800/50"
+      product.isPreferred ? colors.border : "border-border",
+      product.isPreferred ? colors.bg : "bg-card"
     )}>
       {/* Product Image */}
-      <div className="relative aspect-square bg-slate-100 dark:bg-slate-800 overflow-hidden">
+      <div className="relative aspect-square bg-muted overflow-hidden">
         {product.imageUrl && !imageError ? (
           <img
             src={product.imageUrl}
@@ -360,7 +360,7 @@ function ProductCard({ product, type }: { product: any; type: string }) {
             onError={() => setImageError(true)}
           />
         ) : (
-          <div className="w-full h-full flex flex-col items-center justify-center text-slate-400 dark:text-slate-500">
+          <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground">
             <TypeIcon className="w-10 h-10 mb-2" />
             <span className="text-xs uppercase tracking-wider">{type}</span>
           </div>
@@ -376,7 +376,7 @@ function ProductCard({ product, type }: { product: any; type: string }) {
         
         {/* Preferred Badge */}
         {product.isPreferred && (
-          <div className="absolute top-2 right-2 px-2 py-1 rounded-lg bg-blue-500 text-white text-xs font-semibold flex items-center gap-1">
+          <div className="absolute top-2 right-2 px-2 py-1 rounded-lg bg-brand text-white text-xs font-semibold flex items-center gap-1">
             <CheckCircle2 className="w-3 h-3" />
             Preferred
           </div>
@@ -385,10 +385,10 @@ function ProductCard({ product, type }: { product: any; type: string }) {
       
       {/* Product Info */}
       <div className="p-4">
-        <div className="text-xs text-slate-500 dark:text-slate-400 font-medium uppercase tracking-wider mb-1">
+        <div className="text-xs text-muted-foreground font-medium uppercase tracking-wider mb-1">
           {product.vendor}
         </div>
-        <h4 className="font-semibold text-slate-900 dark:text-slate-100 text-sm leading-tight mb-2">
+        <h4 className="font-semibold text-foreground text-sm leading-tight mb-2">
           {product.productName}
         </h4>
         
@@ -396,21 +396,21 @@ function ProductCard({ product, type }: { product: any; type: string }) {
         <div className="space-y-1 mb-3">
           {product.partNumber && (
             <div className="flex items-center gap-1.5 text-xs">
-              <span className="text-slate-400">Part #:</span>
-              <span className="font-mono text-slate-700 dark:text-slate-300">{product.partNumber}</span>
+              <span className="text-muted-foreground">Part #:</span>
+              <span className="font-mono text-foreground">{product.partNumber}</span>
             </div>
           )}
           {product.assemblyDrawing && (
             <div className="flex items-center gap-1.5 text-xs">
-              <span className="text-slate-400">Assy:</span>
-              <span className="font-mono text-slate-700 dark:text-slate-300">{product.assemblyDrawing}</span>
+              <span className="text-muted-foreground">Assy:</span>
+              <span className="font-mono text-foreground">{product.assemblyDrawing}</span>
             </div>
           )}
         </div>
         
         {/* Description (if available) */}
         {product.description && (
-          <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 mb-3">
+          <p className="text-xs text-muted-foreground line-clamp-2 mb-3">
             {product.description}
           </p>
         )}
@@ -422,7 +422,7 @@ function ProductCard({ product, type }: { product: any; type: string }) {
               href={product.productUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:bg-slate-700 dark:hover:bg-slate-100 transition-colors text-xs font-medium"
+              className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-foreground text-background hover:bg-foreground/90 transition-colors text-xs font-medium"
             >
               View Product <ExternalLink className="w-3 h-3" />
             </a>
@@ -432,7 +432,7 @@ function ProductCard({ product, type }: { product: any; type: string }) {
               href={product.datasheetUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-center gap-1 px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors text-xs font-medium"
+              className="flex items-center justify-center gap-1 px-3 py-2 rounded-lg bg-muted text-foreground hover:bg-muted/70 transition-colors text-xs font-medium"
               title="Download Datasheet"
             >
               <FileText className="w-3.5 h-3.5" />
@@ -459,8 +459,8 @@ function VendorProductsSection({ products }: { products: VendorProductsProps | n
   
   return (
     <Card className="p-6">
-      <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-4 flex items-center gap-2">
-        <ShoppingBag className="w-5 h-5 text-blue-500" />
+      <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+        <ShoppingBag className="w-5 h-5 text-brand" />
         Recommended Products
       </h3>
       
@@ -484,7 +484,7 @@ function VendorProductsSection({ products }: { products: VendorProductsProps | n
         <div className="mt-4">
           <button
             onClick={() => setShowAlternatives(!showAlternatives)}
-            className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"
+            className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
             <ChevronDown className={cn("w-4 h-4 transition-transform duration-200", showAlternatives && "rotate-180")} />
             {showAlternatives ? "Hide" : "Show"} alternative products
@@ -523,44 +523,44 @@ function SizeConversionCard({ pipeSize, material }: { pipeSize: string; material
   
   return (
     <Card className="p-6">
-      <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-4 flex items-center gap-2">
-        <Ruler className="w-5 h-5 text-blue-500" />
+      <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+        <Ruler className="w-5 h-5 text-brand" />
         Size Conversion for Ordering
       </h3>
       
       {/* Main Conversion Info */}
-      <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-4 mb-4">
+      <div className="bg-brand/5 rounded-xl p-4 mb-4">
         <div className="grid grid-cols-3 gap-4 text-center">
           <div>
-            <div className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Imperial (NPS)</div>
-            <div className="text-2xl font-bold text-slate-900 dark:text-slate-100">{conv.nps}</div>
+            <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Imperial (NPS)</div>
+            <div className="text-2xl font-bold text-foreground">{conv.nps}</div>
           </div>
           <div className="flex items-center justify-center">
-            <div className="px-3 py-1 bg-blue-500 text-white rounded-full text-xs font-semibold">
+            <div className="px-3 py-1 bg-brand text-white rounded-full text-xs font-semibold">
               = DN{conv.dn}
             </div>
           </div>
           <div>
-            <div className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Metric Size</div>
-            <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{conv.gfMetricSize} mm</div>
+            <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Metric Size</div>
+            <div className="text-2xl font-bold text-brand">{conv.gfMetricSize} mm</div>
           </div>
         </div>
         
-        <div className="mt-4 pt-4 border-t border-blue-200/50 dark:border-blue-700/50 grid grid-cols-2 gap-4 text-sm">
+        <div className="mt-4 pt-4 border-t border-brand/20 grid grid-cols-2 gap-4 text-sm">
           <div>
-            <span className="text-slate-500 dark:text-slate-400">Actual OD:</span>
-            <span className="ml-2 font-semibold text-slate-700 dark:text-slate-300">{conv.odInches}" ({conv.odMm} mm)</span>
+            <span className="text-muted-foreground">Actual OD:</span>
+            <span className="ml-2 font-semibold text-foreground">{conv.odInches}" ({conv.odMm} mm)</span>
           </div>
           <div>
-            <span className="text-slate-500 dark:text-slate-400">Material:</span>
-            <span className="ml-2 font-semibold text-slate-700 dark:text-slate-300">{material}</span>
+            <span className="text-muted-foreground">Material:</span>
+            <span className="ml-2 font-semibold text-foreground">{material}</span>
           </div>
         </div>
       </div>
       
       {/* GF Product Codes */}
       <div className="space-y-3">
-        <div className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+        <div className="text-sm font-medium text-foreground mb-2">
           Georg Fischer Stress Less Product Codes:
         </div>
         
@@ -568,11 +568,11 @@ function SizeConversionCard({ pipeSize, material }: { pipeSize: string; material
           {gfGuide && (
             <div className="p-3 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800">
               <div className="text-xs text-emerald-600 dark:text-emerald-400 font-medium mb-1">Guide</div>
-              <div className="font-mono text-sm font-semibold text-slate-800 dark:text-slate-200">
+              <div className="font-mono text-sm font-semibold text-foreground">
                 {gfGuide.productCode || `Size ${gfGuide.metricSize}mm`}
               </div>
               {gfGuide.loadRatings && (
-                <div className="text-xs text-slate-500 mt-1">
+                <div className="text-xs text-muted-foreground mt-1">
                   Load: {gfGuide.loadRatings.fz}
                 </div>
               )}
@@ -580,9 +580,9 @@ function SizeConversionCard({ pipeSize, material }: { pipeSize: string; material
           )}
           
           {gfHanger && (
-            <div className="p-3 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
-              <div className="text-xs text-blue-600 dark:text-blue-400 font-medium mb-1">Hanger</div>
-              <div className="font-mono text-sm font-semibold text-slate-800 dark:text-slate-200">
+            <div className="p-3 rounded-lg bg-brand/5 border border-brand/20">
+              <div className="text-xs text-brand font-medium mb-1">Hanger</div>
+              <div className="font-mono text-sm font-semibold text-foreground">
                 Size {gfHanger.metricSize}mm
               </div>
             </div>
@@ -591,7 +591,7 @@ function SizeConversionCard({ pipeSize, material }: { pipeSize: string; material
           {gfAnchor && (
             <div className="p-3 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
               <div className="text-xs text-amber-600 dark:text-amber-400 font-medium mb-1">Anchor</div>
-              <div className="font-mono text-sm font-semibold text-slate-800 dark:text-slate-200">
+              <div className="font-mono text-sm font-semibold text-foreground">
                 Size {gfAnchor.metricSize}mm
               </div>
             </div>
@@ -600,11 +600,11 @@ function SizeConversionCard({ pipeSize, material }: { pipeSize: string; material
       </div>
       
       {/* Quick Reference Note */}
-      <div className="mt-4 p-3 rounded-lg bg-slate-100 dark:bg-slate-800 text-xs text-slate-600 dark:text-slate-400">
+      <div className="mt-4 p-3 rounded-lg bg-muted text-xs text-muted-foreground">
         <strong>Note:</strong> When ordering GF Stress Less products, use the metric size ({conv.gfMetricSize}mm) 
         that corresponds to the pipe OD. The guide insert has a 3mm designed gap to eliminate stress transfer.
         <br />
-        <span className="text-slate-500">Source: GF Stress Less Pipe Guide Datasheet (valid from 5/23/25)</span>
+        <span className="text-muted-foreground">Source: GF Stress Less Pipe Guide Datasheet (valid from 5/23/25)</span>
       </div>
     </Card>
   );
@@ -620,17 +620,17 @@ function SupportLayoutDisplay({ layout, pipeLength }: SupportLayoutDisplayProps)
   const typeColors: Record<string, { bg: string; text: string; svgFill: string; svgStroke: string; label: string }> = {
     anchor: { bg: 'bg-red-100 dark:bg-red-900/30', text: 'text-red-700 dark:text-red-300', svgFill: '#fee2e2', svgStroke: '#ef4444', label: 'A' },
     guide: { bg: 'bg-emerald-100 dark:bg-emerald-900/30', text: 'text-emerald-700 dark:text-emerald-300', svgFill: '#d1fae5', svgStroke: '#10b981', label: 'G' },
-    hanger: { bg: 'bg-blue-100 dark:bg-blue-900/30', text: 'text-blue-700 dark:text-blue-300', svgFill: '#dbeafe', svgStroke: '#3b82f6', label: 'H' },
+    hanger: { bg: 'bg-brand/10', text: 'text-brand', svgFill: '#F4E3DB', svgStroke: '#C2543A', label: 'H' },
     riser_clamp: { bg: 'bg-purple-100 dark:bg-purple-900/30', text: 'text-purple-700 dark:text-purple-300', svgFill: '#ede9fe', svgStroke: '#8b5cf6', label: 'RC' },
     slide: { bg: 'bg-amber-100 dark:bg-amber-900/30', text: 'text-amber-700 dark:text-amber-300', svgFill: '#fef3c7', svgStroke: '#f59e0b', label: 'S' },
   };
   
   return (
     <Card className="p-6">
-      <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-4 flex items-center gap-2">
-        <MapPin className="w-5 h-5 text-blue-500" />
+      <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+        <MapPin className="w-5 h-5 text-brand" />
         Support Layout
-        <span className="text-sm font-normal text-slate-500">({layout.totalSupports} supports)</span>
+        <span className="text-sm font-normal text-muted-foreground">({layout.totalSupports} supports)</span>
         {layout.anchors > 0 && (
           <span className="ml-2 px-2 py-0.5 text-xs bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-full font-medium">
             {layout.anchors} Anchor{layout.anchors > 1 ? 's' : ''}
@@ -664,7 +664,7 @@ function SupportLayoutDisplay({ layout, pipeLength }: SupportLayoutDisplayProps)
       )}
       
       {/* Visual Pipe Diagram - SVG */}
-      <div className="mb-6 rounded-xl bg-slate-50 dark:bg-slate-800/50 px-4 pt-4 pb-2">
+      <div className="mb-6 rounded-xl bg-muted px-4 pt-4 pb-2">
         <svg viewBox="0 0 800 72" className="w-full overflow-visible" style={{ height: '72px' }}>
           <defs>
             <linearGradient id="pipeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -696,14 +696,14 @@ function SupportLayoutDisplay({ layout, pipeLength }: SupportLayoutDisplayProps)
             );
           })}
         </svg>
-        <div className="flex justify-between text-[10px] text-slate-400 mt-1">
+        <div className="flex justify-between text-[10px] text-muted-foreground mt-1">
           <span>0 ft</span>
           <span>{pipeLength} ft</span>
         </div>
       </div>
       
       {/* Legend */}
-      <div className="flex flex-wrap gap-3 mb-4 p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg">
+      <div className="flex flex-wrap gap-3 mb-4 p-3 bg-muted rounded-lg">
         {Object.entries(typeColors).map(([type, colors]) => {
           const count = layout.supports.filter(s => s.type === type).length;
           if (count === 0) return null;
@@ -712,7 +712,7 @@ function SupportLayoutDisplay({ layout, pipeLength }: SupportLayoutDisplayProps)
               <span className={cn("w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold", colors.bg, colors.text)}>
                 {colors.label}
               </span>
-              <span className="text-sm text-slate-600 dark:text-slate-300 capitalize">
+              <span className="text-sm text-muted-foreground capitalize">
                 {type.replace('_', ' ')} ({count})
               </span>
             </div>
@@ -722,7 +722,7 @@ function SupportLayoutDisplay({ layout, pipeLength }: SupportLayoutDisplayProps)
       
       {/* Support List */}
       <div className="space-y-2">
-        <div className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+        <div className="text-sm font-medium text-foreground mb-2">
           Support Schedule:
         </div>
         <div className="max-h-64 overflow-y-auto space-y-2">
@@ -735,7 +735,7 @@ function SupportLayoutDisplay({ layout, pipeLength }: SupportLayoutDisplayProps)
                   "p-3 rounded-lg border flex items-start gap-3",
                   support.critical 
                     ? "border-amber-200 dark:border-amber-800 bg-amber-50/50 dark:bg-amber-900/10" 
-                    : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50"
+                    : "border-border bg-card"
                 )}
               >
                 <div className={cn(
@@ -746,10 +746,10 @@ function SupportLayoutDisplay({ layout, pipeLength }: SupportLayoutDisplayProps)
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="font-semibold text-slate-900 dark:text-slate-100 capitalize">
+                    <span className="font-semibold text-foreground capitalize">
                       {support.type.replace('_', ' ')}
                     </span>
-                    <span className="text-sm text-slate-500 font-mono">
+                    <span className="text-sm text-muted-foreground font-mono">
                       @ {support.position.toFixed(1)} ft
                     </span>
                     {support.critical && (
@@ -758,11 +758,11 @@ function SupportLayoutDisplay({ layout, pipeLength }: SupportLayoutDisplayProps)
                       </span>
                     )}
                   </div>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">
+                  <p className="text-sm text-muted-foreground">
                     {support.reason}
                   </p>
                   {support.notes && support.notes.length > 0 && (
-                    <ul className="mt-1 text-xs text-slate-500 list-disc list-inside">
+                    <ul className="mt-1 text-xs text-muted-foreground list-disc list-inside">
                       {support.notes.map((note, i) => (
                         <li key={i}>{note}</li>
                       ))}
@@ -907,14 +907,14 @@ function ResultsDisplay({
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Plain-Language Summary */}
-      <Card className="p-6 border-2 border-blue-200 dark:border-blue-800 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20">
-        <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-3">
+      <Card className="p-6 border-2 border-brand/20 bg-brand/5">
+        <h3 className="text-base font-semibold text-foreground mb-3">
           For your {pipeLength ? `${pipeLength} ft, ` : ''}{result.input?.pipeSize || ''} {result.input?.material || ''} {result.input?.service || ''} pipe:
         </h3>
         <ul className="space-y-2">
           {summaryBullets.map((bullet, i) => (
-            <li key={i} className="flex items-start gap-2 text-sm text-slate-700 dark:text-slate-300">
-              <span className="mt-0.5 flex-shrink-0 w-5 h-5 rounded-full bg-blue-500 text-white text-xs flex items-center justify-center font-medium">
+            <li key={i} className="flex items-start gap-2 text-sm text-foreground">
+              <span className="mt-0.5 flex-shrink-0 w-5 h-5 rounded-full bg-brand text-white text-xs flex items-center justify-center font-medium">
                 {i + 1}
               </span>
               <span dangerouslySetInnerHTML={{ 
@@ -933,9 +933,9 @@ function ResultsDisplay({
       {/* Summary Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card className="p-4">
-          <div className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">Max Span</div>
-          <div className="text-2xl font-bold text-slate-900 dark:text-slate-100 mt-1">
-            {result.calculations.adjustedMaxSpan} <span className="text-base font-normal text-slate-500">ft</span>
+          <div className="text-xs text-muted-foreground uppercase tracking-wider">Max Span</div>
+          <div className="text-2xl font-bold text-foreground mt-1">
+            {result.calculations.adjustedMaxSpan} <span className="text-base font-normal text-muted-foreground">ft</span>
           </div>
           {result.calculations.spanReductionApplied && (
             <div className="text-xs text-amber-600 dark:text-amber-400 mt-1">
@@ -945,9 +945,9 @@ function ResultsDisplay({
         </Card>
         
         <Card className="p-4">
-          <div className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">Guide Spacing</div>
-          <div className="text-2xl font-bold text-slate-900 dark:text-slate-100 mt-1">
-            {result.calculations.guideSpacing} <span className="text-base font-normal text-slate-500">ft</span>
+          <div className="text-xs text-muted-foreground uppercase tracking-wider">Guide Spacing</div>
+          <div className="text-2xl font-bold text-foreground mt-1">
+            {result.calculations.guideSpacing} <span className="text-base font-normal text-muted-foreground">ft</span>
           </div>
           {result.calculations.guideSpacingReduced && (
             <div className="text-xs text-amber-600 dark:text-amber-400 mt-1">
@@ -957,20 +957,20 @@ function ResultsDisplay({
         </Card>
         
         <Card className="p-4">
-          <div className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider"># Supports</div>
-          <div className="text-2xl font-bold text-blue-600 dark:text-blue-400 mt-1">
+          <div className="text-xs text-muted-foreground uppercase tracking-wider"># Supports</div>
+          <div className="text-2xl font-bold text-brand mt-1">
             {result.calculations.numberOfSupports}
           </div>
-          <div className="text-xs text-slate-500 mt-1">
+          <div className="text-xs text-muted-foreground mt-1">
             ({result.calculations.numberOfSpans} spans)
           </div>
         </Card>
         
         <Card className="p-4">
-          <div className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">Tolerance</div>
+          <div className="text-xs text-muted-foreground uppercase tracking-wider">Tolerance</div>
           <div className={cn(
             "text-2xl font-bold mt-1",
-            result.tolerance.isCritical ? "text-red-600 dark:text-red-400" : "text-slate-900 dark:text-slate-100"
+            result.tolerance.isCritical ? "text-red-600 dark:text-red-400" : "text-foreground"
           )}>
             {result.tolerance.placementToleranceInches === 'per_design' 
               ? "Per Design" 
@@ -988,37 +988,37 @@ function ResultsDisplay({
 
       {/* Thermal Expansion Calculations (if applicable) */}
       {(result.calculations.minGuideFromElbow || result.calculations.minSupportFromRiserElbow || result.calculations.minBranchGuideFromRun || result.calculations.canUseGuideAsAnchor) && (
-        <Card className="p-6 bg-blue-50/50 dark:bg-blue-900/10 border-blue-200 dark:border-blue-800">
-          <h3 className="text-lg font-semibold text-blue-800 dark:text-blue-300 mb-4 flex items-center gap-2">
+        <Card className="p-6 bg-brand/5 border-brand/20">
+          <h3 className="text-lg font-semibold text-brand mb-4 flex items-center gap-2">
             <Thermometer className="w-5 h-5" />
             Thermal Expansion Requirements
           </h3>
           <div className="grid md:grid-cols-2 gap-4">
             {result.calculations.minGuideFromElbow && (
-              <div className="p-3 rounded-lg bg-white dark:bg-slate-800/50">
-                <div className="text-xs text-blue-600 dark:text-blue-400 font-medium">Min Guide from Elbow</div>
-                <div className="text-xl font-bold text-slate-900 dark:text-slate-100 mt-1">
+              <div className="p-3 rounded-lg bg-card">
+                <div className="text-xs text-brand font-medium">Min Guide from Elbow</div>
+                <div className="text-xl font-bold text-foreground mt-1">
                   {result.calculations.minGuideFromElbow} ft
                 </div>
-                <div className="text-xs text-slate-500 mt-1">For thermal flexibility (40 05 19, Part 3.2)</div>
+                <div className="text-xs text-muted-foreground mt-1">For thermal flexibility (40 05 19, Part 3.2)</div>
               </div>
             )}
             {result.calculations.minSupportFromRiserElbow && (
-              <div className="p-3 rounded-lg bg-white dark:bg-slate-800/50">
-                <div className="text-xs text-blue-600 dark:text-blue-400 font-medium">Min Support from Riser Elbow</div>
-                <div className="text-xl font-bold text-slate-900 dark:text-slate-100 mt-1">
+              <div className="p-3 rounded-lg bg-card">
+                <div className="text-xs text-brand font-medium">Min Support from Riser Elbow</div>
+                <div className="text-xl font-bold text-foreground mt-1">
                   {result.calculations.minSupportFromRiserElbow} ft
                 </div>
-                <div className="text-xs text-slate-500 mt-1">Continuation flexibility (40 05 19, Part 4.4)</div>
+                <div className="text-xs text-muted-foreground mt-1">Continuation flexibility (40 05 19, Part 4.4)</div>
               </div>
             )}
             {result.calculations.minBranchGuideFromRun && (
-              <div className="p-3 rounded-lg bg-white dark:bg-slate-800/50">
-                <div className="text-xs text-blue-600 dark:text-blue-400 font-medium">Min Branch Guide from Run</div>
-                <div className="text-xl font-bold text-slate-900 dark:text-slate-100 mt-1">
+              <div className="p-3 rounded-lg bg-card">
+                <div className="text-xs text-brand font-medium">Min Branch Guide from Run</div>
+                <div className="text-xl font-bold text-foreground mt-1">
                   {result.calculations.minBranchGuideFromRun} ft
                 </div>
-                <div className="text-xs text-slate-500 mt-1">Branch thermal flexibility (40 05 19, Part 5.3)</div>
+                <div className="text-xs text-muted-foreground mt-1">Branch thermal flexibility (40 05 19, Part 5.3)</div>
               </div>
             )}
             {result.calculations.canUseGuideAsAnchor && (
@@ -1026,10 +1026,10 @@ function ResultsDisplay({
                 <div className="text-xs text-green-600 dark:text-green-400 font-medium flex items-center gap-1">
                   <CheckCircle2 className="w-3.5 h-3.5" /> Short Run Option
                 </div>
-                <div className="text-lg font-semibold text-slate-900 dark:text-slate-100 mt-1">
+                <div className="text-lg font-semibold text-foreground mt-1">
                   Guide as Anchor
                 </div>
-                <div className="text-xs text-slate-600 dark:text-slate-400 mt-1">
+                <div className="text-xs text-muted-foreground mt-1">
                   Place guide within {result.calculations.guideAsAnchorDistance} ft of 90° elbow
                 </div>
               </div>
@@ -1040,12 +1040,12 @@ function ResultsDisplay({
 
       {/* Support Types */}
       <Card className="p-6">
-        <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-4 flex items-center gap-2">
-          <Package className="w-5 h-5 text-blue-500" />
+        <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+          <Package className="w-5 h-5 text-brand" />
           Support Types
         </h3>
-        <div className="p-3 mb-4 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
-          <p className="text-xs text-blue-700 dark:text-blue-300 leading-relaxed">
+        <div className="p-3 mb-4 rounded-lg bg-brand/5 border border-brand/20">
+          <p className="text-xs text-brand leading-relaxed">
             Three types of support are recommended: one for <strong>vertical load</strong> (deadweight), 
             one for <strong>side-to-side control</strong> (lateral), and one for <strong>preventing lengthwise movement</strong> (axial restraint). 
             Hover the <Info className="w-3 h-3 inline" /> icon for details.
@@ -1053,44 +1053,44 @@ function ResultsDisplay({
         </div>
         <TooltipProvider delayDuration={200}>
         <div className="grid md:grid-cols-3 gap-4">
-          <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50">
-            <div className="text-xs text-slate-500 uppercase tracking-wider">Deadweight</div>
-            <div className="text-lg font-semibold text-slate-900 dark:text-slate-100 mt-1">
+          <div className="p-4 rounded-xl bg-muted">
+            <div className="text-xs text-muted-foreground uppercase tracking-wider">Deadweight</div>
+            <div className="text-lg font-semibold text-foreground mt-1">
               <SupportTypeLabel type={result.supportTypes.deadweight} />
             </div>
             {result.hardware.deadweight && (
-              <div className="text-sm text-slate-600 dark:text-slate-400 mt-2">
+              <div className="text-sm text-muted-foreground mt-2">
                 {result.hardware.deadweight.productName}
-                <div className="text-xs text-slate-500">{result.hardware.deadweight.manufacturer}</div>
+                <div className="text-xs text-muted-foreground">{result.hardware.deadweight.manufacturer}</div>
               </div>
             )}
           </div>
           
-          <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50">
-            <div className="text-xs text-slate-500 uppercase tracking-wider">Lateral</div>
-            <div className="text-lg font-semibold text-slate-900 dark:text-slate-100 mt-1">
+          <div className="p-4 rounded-xl bg-muted">
+            <div className="text-xs text-muted-foreground uppercase tracking-wider">Lateral</div>
+            <div className="text-lg font-semibold text-foreground mt-1">
               <SupportTypeLabel type={result.supportTypes.lateral} />
             </div>
             {result.hardware.lateral && (
-              <div className="text-sm text-slate-600 dark:text-slate-400 mt-2">
+              <div className="text-sm text-muted-foreground mt-2">
                 {result.hardware.lateral.productName}
-                <div className="text-xs text-slate-500">{result.hardware.lateral.manufacturer}</div>
+                <div className="text-xs text-muted-foreground">{result.hardware.lateral.manufacturer}</div>
               </div>
             )}
           </div>
           
-          <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50">
-            <div className="text-xs text-slate-500 uppercase tracking-wider">Axial</div>
-            <div className="text-lg font-semibold text-slate-900 dark:text-slate-100 mt-1">
+          <div className="p-4 rounded-xl bg-muted">
+            <div className="text-xs text-muted-foreground uppercase tracking-wider">Axial</div>
+            <div className="text-lg font-semibold text-foreground mt-1">
               {result.supportTypes.axial 
                 ? <SupportTypeLabel type={result.supportTypes.axial} />
-                : <span className="text-slate-400">N/A</span>
+                : <span className="text-muted-foreground">N/A</span>
               }
             </div>
             {result.hardware.axial && (
-              <div className="text-sm text-slate-600 dark:text-slate-400 mt-2">
+              <div className="text-sm text-muted-foreground mt-2">
                 {result.hardware.axial.productName}
-                <div className="text-xs text-slate-500">{result.hardware.axial.manufacturer}</div>
+                <div className="text-xs text-muted-foreground">{result.hardware.axial.manufacturer}</div>
               </div>
             )}
           </div>
@@ -1098,18 +1098,18 @@ function ResultsDisplay({
         </TooltipProvider>
         
         {/* Cush-a-Clamp eligibility */}
-        <div className="mt-4 p-3 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center gap-3">
+        <div className="mt-4 p-3 rounded-lg bg-muted flex items-center gap-3">
           {result.flags.cushAClampEligible ? (
             <>
               <CheckCircle2 className="w-5 h-5 text-green-500" />
-              <span className="text-sm text-slate-700 dark:text-slate-300">
+              <span className="text-sm text-foreground">
                 <strong>Cush-a-Clamp eligible</strong> - Multi-point anchoring available
               </span>
             </>
           ) : (
             <>
-              <XCircle className="w-5 h-5 text-slate-400" />
-              <span className="text-sm text-slate-500">
+              <XCircle className="w-5 h-5 text-muted-foreground" />
+              <span className="text-sm text-muted-foreground">
                 Cush-a-Clamp <strong>not eligible</strong>
                 {result.flags.isPlastic && " (plastic material)"}
               </span>
@@ -1128,7 +1128,7 @@ function ResultsDisplay({
           <ul className="space-y-2">
             {result.warnings.map((warning, index) => (
               <li key={index} className="flex items-start gap-2 text-sm text-amber-900 dark:text-amber-200">
-                <span className="text-amber-500 mt-1">•</span>
+                <span className="text-brand mt-1">•</span>
                 {warning}
               </li>
             ))}
@@ -1138,50 +1138,50 @@ function ResultsDisplay({
 
       {/* Citations */}
       <Card className="p-6">
-        <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-4 flex items-center gap-2">
-          <FileText className="w-5 h-5 text-blue-500" />
+        <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+          <FileText className="w-5 h-5 text-brand" />
           Document Citations
         </h3>
         <div className="grid md:grid-cols-2 gap-4">
-          <div className="p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50">
-            <div className="text-xs text-blue-600 dark:text-blue-400 font-medium">Max Span</div>
-            <div className="text-sm text-slate-700 dark:text-slate-300 mt-1">
+          <div className="p-3 rounded-lg bg-muted">
+            <div className="text-xs text-brand font-medium">Max Span</div>
+            <div className="text-sm text-foreground mt-1">
               {result.citations.maxSpan.document}, {result.citations.maxSpan.table}
             </div>
             {result.citations.maxSpan.description && (
-              <div className="text-xs text-slate-500 mt-1">{result.citations.maxSpan.description}</div>
+              <div className="text-xs text-muted-foreground mt-1">{result.citations.maxSpan.description}</div>
             )}
           </div>
           
-          <div className="p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50">
-            <div className="text-xs text-blue-600 dark:text-blue-400 font-medium">Guide Spacing</div>
-            <div className="text-sm text-slate-700 dark:text-slate-300 mt-1">
+          <div className="p-3 rounded-lg bg-muted">
+            <div className="text-xs text-brand font-medium">Guide Spacing</div>
+            <div className="text-sm text-foreground mt-1">
               {result.citations.guideSpacing.document}, {result.citations.guideSpacing.section}
             </div>
           </div>
           
-          <div className="p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50">
-            <div className="text-xs text-blue-600 dark:text-blue-400 font-medium">Hardware</div>
-            <div className="text-sm text-slate-700 dark:text-slate-300 mt-1">
+          <div className="p-3 rounded-lg bg-muted">
+            <div className="text-xs text-brand font-medium">Hardware</div>
+            <div className="text-sm text-foreground mt-1">
               {result.citations.hardware.document}, {result.citations.hardware.section}
             </div>
           </div>
           
-          <div className="p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50">
-            <div className="text-xs text-blue-600 dark:text-blue-400 font-medium">Tolerance</div>
-            <div className="text-sm text-slate-700 dark:text-slate-300 mt-1">
+          <div className="p-3 rounded-lg bg-muted">
+            <div className="text-xs text-brand font-medium">Tolerance</div>
+            <div className="text-sm text-foreground mt-1">
               {result.citations.tolerance.document}, Page {result.citations.tolerance.page}
             </div>
           </div>
           
           {result.citations.sgCorrection && (
-            <div className="p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 md:col-span-2">
-              <div className="text-xs text-blue-600 dark:text-blue-400 font-medium">SG Correction</div>
-              <div className="text-sm text-slate-700 dark:text-slate-300 mt-1">
+            <div className="p-3 rounded-lg bg-muted md:col-span-2">
+              <div className="text-xs text-brand font-medium">SG Correction</div>
+              <div className="text-sm text-foreground mt-1">
                 {result.citations.sgCorrection.document}, {result.citations.sgCorrection.table}
               </div>
               {result.citations.sgCorrection.description && (
-                <div className="text-xs text-slate-500 mt-1">{result.citations.sgCorrection.description}</div>
+                <div className="text-xs text-muted-foreground mt-1">{result.citations.sgCorrection.description}</div>
               )}
             </div>
           )}
@@ -1189,7 +1189,7 @@ function ResultsDisplay({
       </Card>
 
       {/* Vendor Products */}
-      <VendorProductsSection products={vendorProducts} />
+      <VendorProductsSection products={vendorProducts ?? null} />
 
       {/* Size Conversion for Ordering */}
       {result.input?.pipeSize && result.input?.material && (
@@ -1203,7 +1203,7 @@ function ResultsDisplay({
       <div className="flex items-center justify-end">
         <button
           onClick={handleExportCSV}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl font-medium text-sm transition-all bg-blue-500 text-white hover:bg-blue-600 shadow-sm"
+          className="flex items-center gap-2 px-4 py-2 rounded-xl font-medium text-sm transition-all bg-brand text-white hover:bg-brand/90 shadow-sm"
         >
           <Download className="w-4 h-4" />
           Export Support Schedule (CSV)
@@ -1417,26 +1417,26 @@ function CalculatorPageInner() {
     && isBranchDistanceValid;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-100 via-blue-50 to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-700/50">
+      <header className="sticky top-0 z-50 bg-card/95 supports-[backdrop-filter]:bg-card/80 backdrop-blur border-b border-border">
         <div className="container mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link
-              href="/"
-              className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              href="/home"
+              className="p-2 rounded-xl hover:bg-muted transition-colors"
             >
-              <ArrowLeft className="w-5 h-5 text-slate-600 dark:text-slate-300" />
+              <ArrowLeft className="w-5 h-5 text-muted-foreground" />
             </Link>
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white">
+              <div className="p-2 rounded-xl bg-brand text-white">
                 <Calculator className="w-5 h-5" />
               </div>
               <div>
-                <h1 className="font-semibold text-slate-900 dark:text-slate-100">
+                <h1 className="font-display font-semibold tracking-tight text-foreground">
                   Pipe Support Calculator
                 </h1>
-                <p className="text-xs text-slate-500">Section 40 05 19 Rev. 3</p>
+                <p className="text-xs text-muted-foreground">Section 40 05 19 Rev. 3</p>
               </div>
             </div>
           </div>
@@ -1448,14 +1448,14 @@ function CalculatorPageInner() {
           {/* Form */}
           <div className="lg:col-span-2 space-y-6">
             {/* Mode Toggle */}
-            <div className="flex items-center gap-1 p-1 bg-slate-100 dark:bg-slate-800 rounded-xl">
+            <div className="flex items-center gap-1 p-1 bg-muted rounded-xl">
               <button
                 onClick={() => setMode('simple')}
                 className={cn(
                   "flex-1 px-4 py-2 rounded-lg text-sm font-medium transition-all",
                   mode === 'simple'
-                    ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 shadow-sm"
-                    : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
+                    ? "bg-card text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
                 )}
               >
                 Simple
@@ -1465,8 +1465,8 @@ function CalculatorPageInner() {
                 className={cn(
                   "flex-1 px-4 py-2 rounded-lg text-sm font-medium transition-all",
                   mode === 'advanced'
-                    ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 shadow-sm"
-                    : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
+                    ? "bg-card text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
                 )}
               >
                 Advanced
@@ -1475,8 +1475,8 @@ function CalculatorPageInner() {
 
             {/* Step 1: Pipe Properties */}
             <Card className="p-6">
-              <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-4 flex items-center gap-2">
-                <span className="flex items-center justify-center w-6 h-6 rounded-full bg-blue-500 text-white text-xs">1</span>
+              <h2 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
+                <span className="flex items-center justify-center w-6 h-6 rounded-full bg-brand text-white text-xs">1</span>
                 Pipe Properties
               </h2>
               <div className="space-y-4">
@@ -1505,17 +1505,17 @@ function CalculatorPageInner() {
                       "p-3 rounded-xl flex items-center gap-2 transition-all",
                       "border-2",
                       service === "water"
-                        ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
-                        : "border-slate-200 dark:border-slate-700"
+                        ? "border-brand bg-brand/5"
+                        : "border-border"
                     )}
                   >
                     <Droplets className={cn(
                       "w-4 h-4",
-                      service === "water" ? "text-blue-500" : "text-slate-400"
+                      service === "water" ? "text-brand" : "text-muted-foreground"
                     )} />
                     <span className={cn(
                       "text-sm font-medium",
-                      service === "water" ? "text-blue-700 dark:text-blue-300" : "text-slate-600 dark:text-slate-400"
+                      service === "water" ? "text-brand" : "text-muted-foreground"
                     )}>
                       Water
                     </span>
@@ -1526,17 +1526,17 @@ function CalculatorPageInner() {
                       "p-3 rounded-xl flex items-center gap-2 transition-all",
                       "border-2",
                       service === "vapor"
-                        ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
-                        : "border-slate-200 dark:border-slate-700"
+                        ? "border-brand bg-brand/5"
+                        : "border-border"
                     )}
                   >
                     <Wind className={cn(
                       "w-4 h-4",
-                      service === "vapor" ? "text-blue-500" : "text-slate-400"
+                      service === "vapor" ? "text-brand" : "text-muted-foreground"
                     )} />
                     <span className={cn(
                       "text-sm font-medium",
-                      service === "vapor" ? "text-blue-700 dark:text-blue-300" : "text-slate-600 dark:text-slate-400"
+                      service === "vapor" ? "text-brand" : "text-muted-foreground"
                     )}>
                       Vapor
                     </span>
@@ -1570,8 +1570,8 @@ function CalculatorPageInner() {
 
             {/* Step 2: Installation */}
             <Card className="p-6">
-              <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-4 flex items-center gap-2">
-                <span className="flex items-center justify-center w-6 h-6 rounded-full bg-blue-500 text-white text-xs">2</span>
+              <h2 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
+                <span className="flex items-center justify-center w-6 h-6 rounded-full bg-brand text-white text-xs">2</span>
                 Installation Details
               </h2>
               <div className="space-y-4">
@@ -1593,17 +1593,17 @@ function CalculatorPageInner() {
                       "p-3 rounded-xl flex flex-col items-center gap-1 transition-all",
                       "border-2",
                       orientation === "horizontal"
-                        ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
-                        : "border-slate-200 dark:border-slate-700"
+                        ? "border-brand bg-brand/5"
+                        : "border-border"
                     )}
                   >
                     <div className={cn(
                       "w-8 h-1 rounded-full",
-                      orientation === "horizontal" ? "bg-blue-500" : "bg-slate-300 dark:bg-slate-600"
+                      orientation === "horizontal" ? "bg-brand" : "bg-muted-foreground/30"
                     )} />
                     <span className={cn(
                       "text-xs font-medium",
-                      orientation === "horizontal" ? "text-blue-700 dark:text-blue-300" : "text-slate-500"
+                      orientation === "horizontal" ? "text-brand" : "text-muted-foreground"
                     )}>
                       Horizontal
                     </span>
@@ -1614,17 +1614,17 @@ function CalculatorPageInner() {
                       "p-3 rounded-xl flex flex-col items-center gap-1 transition-all",
                       "border-2",
                       orientation === "vertical"
-                        ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
-                        : "border-slate-200 dark:border-slate-700"
+                        ? "border-brand bg-brand/5"
+                        : "border-border"
                     )}
                   >
                     <div className={cn(
                       "w-1 h-8 rounded-full",
-                      orientation === "vertical" ? "bg-blue-500" : "bg-slate-300 dark:bg-slate-600"
+                      orientation === "vertical" ? "bg-brand" : "bg-muted-foreground/30"
                     )} />
                     <span className={cn(
                       "text-xs font-medium",
-                      orientation === "vertical" ? "text-blue-700 dark:text-blue-300" : "text-slate-500"
+                      orientation === "vertical" ? "text-brand" : "text-muted-foreground"
                     )}>
                       Vertical
                     </span>
@@ -1633,7 +1633,7 @@ function CalculatorPageInner() {
                 
                 {mode === 'advanced' && (
                   <div>
-                    <label className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 block">
+                    <label className="text-sm font-medium text-foreground mb-2 block">
                       Mounting Method
                     </label>
                     <div className="grid grid-cols-1 gap-2">
@@ -1664,35 +1664,35 @@ function CalculatorPageInner() {
 
             {/* Pipe Run Configuration */}
             {mode === 'advanced' && (
-            <Card className="p-6 border-2 border-blue-200 dark:border-blue-800 bg-blue-50/30 dark:bg-blue-900/10">
+            <Card className="p-6 border-2 border-brand/20 bg-brand/5">
               <button
                 onClick={() => setShowLayoutConfig(!showLayoutConfig)}
                 className="w-full flex items-center justify-between"
               >
-                <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-                  <MapPin className="w-4 h-4 text-blue-500" />
+                <h2 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                  <MapPin className="w-4 h-4 text-brand" />
                   Pipe Run Configuration
-                  <span className="text-xs font-normal text-blue-600 dark:text-blue-400 ml-2">
+                  <span className="text-xs font-normal text-brand ml-2">
                     (for support layout)
                   </span>
                 </h2>
                 {showLayoutConfig ? (
-                  <ChevronUp className="w-4 h-4 text-slate-400" />
+                  <ChevronUp className="w-4 h-4 text-muted-foreground" />
                 ) : (
-                  <ChevronDown className="w-4 h-4 text-slate-400" />
+                  <ChevronDown className="w-4 h-4 text-muted-foreground" />
                 )}
               </button>
               
               {showLayoutConfig && (
                 <div className="mt-4 space-y-4">
-                  <p className="text-xs text-slate-600 dark:text-slate-400">
+                  <p className="text-xs text-muted-foreground">
                     Tell us what this pipe connects to, and we'll show you exactly where to place each support.
                   </p>
                   
                   <div className="grid grid-cols-2 gap-4">
                     {/* Start Type */}
                     <div>
-                      <label className="text-xs font-medium text-slate-700 dark:text-slate-300 mb-2 block">
+                      <label className="text-xs font-medium text-foreground mb-2 block">
                         Start Connection
                       </label>
                       <div className="space-y-1.5">
@@ -1709,14 +1709,14 @@ function CalculatorPageInner() {
                               "w-full p-2 rounded-lg text-left text-xs transition-all",
                               "border flex items-start gap-2",
                               startType === opt.value
-                                ? "border-blue-500 bg-blue-100 dark:bg-blue-900/30"
-                                : "border-slate-200 dark:border-slate-700 hover:border-slate-300"
+                                ? "border-brand bg-brand/10"
+                                : "border-border hover:border-foreground/30"
                             )}
                           >
-                            <opt.icon className={cn("w-3.5 h-3.5 mt-0.5 flex-shrink-0", startType === opt.value ? "text-blue-600" : "text-slate-400")} />
+                            <opt.icon className={cn("w-3.5 h-3.5 mt-0.5 flex-shrink-0", startType === opt.value ? "text-brand" : "text-muted-foreground")} />
                             <div>
                               <div className="font-medium">{opt.label}</div>
-                              <div className="text-slate-500 text-[10px]">{opt.desc}</div>
+                              <div className="text-muted-foreground text-[10px]">{opt.desc}</div>
                             </div>
                           </button>
                         ))}
@@ -1725,7 +1725,7 @@ function CalculatorPageInner() {
                     
                     {/* End Type */}
                     <div>
-                      <label className="text-xs font-medium text-slate-700 dark:text-slate-300 mb-2 block">
+                      <label className="text-xs font-medium text-foreground mb-2 block">
                         End Connection
                       </label>
                       <div className="space-y-1.5">
@@ -1742,14 +1742,14 @@ function CalculatorPageInner() {
                               "w-full p-2 rounded-lg text-left text-xs transition-all",
                               "border flex items-start gap-2",
                               endType === opt.value
-                                ? "border-blue-500 bg-blue-100 dark:bg-blue-900/30"
-                                : "border-slate-200 dark:border-slate-700 hover:border-slate-300"
+                                ? "border-brand bg-brand/10"
+                                : "border-border hover:border-foreground/30"
                             )}
                           >
-                            <opt.icon className={cn("w-3.5 h-3.5 mt-0.5 flex-shrink-0", endType === opt.value ? "text-blue-600" : "text-slate-400")} />
+                            <opt.icon className={cn("w-3.5 h-3.5 mt-0.5 flex-shrink-0", endType === opt.value ? "text-brand" : "text-muted-foreground")} />
                             <div>
                               <div className="font-medium">{opt.label}</div>
-                              <div className="text-slate-500 text-[10px]">{opt.desc}</div>
+                              <div className="text-muted-foreground text-[10px]">{opt.desc}</div>
                             </div>
                           </button>
                         ))}
@@ -1758,8 +1758,8 @@ function CalculatorPageInner() {
                   </div>
                   
                   {/* Mid-Run Fittings */}
-                  <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
-                    <label className="text-xs font-medium text-slate-700 dark:text-slate-300 mb-2 block">
+                  <div className="mt-4 pt-4 border-t border-border">
+                    <label className="text-xs font-medium text-foreground mb-2 block">
                       Mid-Run Fittings (Elbow, Tee, Wye)
                     </label>
                     <Toggle
@@ -1769,16 +1769,16 @@ function CalculatorPageInner() {
                       description="Add elbow, tee, or wye along the pipe"
                     />
                     {hasMidRunFitting && (
-                      <div className="mt-3 space-y-3 p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
+                      <div className="mt-3 space-y-3 p-3 bg-muted rounded-xl">
                         <div className="grid grid-cols-2 gap-3">
                           <div>
-                            <label className="text-xs font-medium text-slate-600 dark:text-slate-400 mb-1 block">
+                            <label className="text-xs font-medium text-muted-foreground mb-1 block">
                               Fitting Type
                             </label>
                             <select
                               value={midRunFittingType}
                               onChange={(e) => setMidRunFittingType(e.target.value as "elbow" | "tee" | "wye")}
-                              className="w-full h-10 px-3 rounded-lg text-sm bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700"
+                              className="w-full h-10 px-3 rounded-lg text-sm bg-card border border-border"
                             >
                               <option value="elbow">90° Elbow</option>
                               <option value="tee">Tee</option>
@@ -1786,7 +1786,7 @@ function CalculatorPageInner() {
                             </select>
                           </div>
                           <div>
-                            <label className="text-xs font-medium text-slate-600 dark:text-slate-400 mb-1 block">
+                            <label className="text-xs font-medium text-muted-foreground mb-1 block">
                               Position (ft from start)
                             </label>
                             <input
@@ -1795,7 +1795,7 @@ function CalculatorPageInner() {
                               onChange={(e) => setMidRunFittingPosition(e.target.value)}
                               placeholder="e.g., 10"
                               min={0}
-                              className="w-full h-10 px-3 rounded-lg text-sm bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700"
+                              className="w-full h-10 px-3 rounded-lg text-sm bg-card border border-border"
                             />
                           </div>
                         </div>
@@ -1815,8 +1815,8 @@ function CalculatorPageInner() {
                         
                         {/* Metal Elbow Info */}
                         {material && !['PVC Schedule 40', 'PVC Schedule 80', 'CPVC', 'PP', 'PVDF'].includes(material) && midRunFittingType === 'elbow' && (
-                          <div className="p-2 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
-                            <p className="text-xs text-blue-700 dark:text-blue-300">
+                          <div className="p-2 rounded-lg bg-brand/5 border border-brand/20">
+                            <p className="text-xs text-brand">
                               <strong>Metal Elbow:</strong> Span reduced to 70% • Guide distance from elbow per 40 05 19, Part 3.2
                             </p>
                           </div>
@@ -1828,13 +1828,13 @@ function CalculatorPageInner() {
                   {/* Quick Scenario Warning */}
                   {startType === 'equipment' && endType === 'equipment' && (
                     <div className="p-2 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 text-xs text-amber-800 dark:text-amber-200 flex items-start gap-1.5">
-                      <AlertTriangle className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-amber-500" />
+                      <AlertTriangle className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-brand" />
                       <span><strong>Equipment to Equipment:</strong> No anchors will be placed — thermal expansion must be accommodated at both ends.</span>
                     </div>
                   )}
                   {startType === 'anchor' && endType === 'anchor' && (
-                    <div className="p-2 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 text-xs text-blue-800 dark:text-blue-200 flex items-start gap-1.5">
-                      <Ruler className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-blue-500" />
+                    <div className="p-2 rounded-lg bg-brand/5 border border-brand/20 text-xs text-foreground flex items-start gap-1.5">
+                      <Ruler className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-brand" />
                       <span><strong>Anchor to Anchor:</strong> This creates a fixed run. Consider if a thermal expansion loop is needed for long runs.</span>
                     </div>
                   )}
@@ -1846,8 +1846,8 @@ function CalculatorPageInner() {
             {/* Step 3: Environment */}
             {mode === 'advanced' && (
             <Card className="p-6">
-              <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-4 flex items-center gap-2">
-                <span className="flex items-center justify-center w-6 h-6 rounded-full bg-blue-500 text-white text-xs">3</span>
+              <h2 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
+                <span className="flex items-center justify-center w-6 h-6 rounded-full bg-brand text-white text-xs">3</span>
                 Environment
               </h2>
               <div className="space-y-4">
@@ -1878,23 +1878,23 @@ function CalculatorPageInner() {
             <Card className="p-6">
               <button
                 onClick={() => setShowAdvanced(!showAdvanced)}
-                className="w-full flex items-center justify-between text-sm font-semibold text-slate-900 dark:text-slate-100"
+                className="w-full flex items-center justify-between text-sm font-semibold text-foreground"
               >
                 <span className="flex items-center gap-2">
-                  <ClipboardList className="w-4 h-4 text-slate-400" />
+                  <ClipboardList className="w-4 h-4 text-muted-foreground" />
                   Advanced Conditions
                 </span>
                 {showAdvanced ? (
-                  <ChevronUp className="w-4 h-4 text-slate-400" />
+                  <ChevronUp className="w-4 h-4 text-muted-foreground" />
                 ) : (
-                  <ChevronDown className="w-4 h-4 text-slate-400" />
+                  <ChevronDown className="w-4 h-4 text-muted-foreground" />
                 )}
               </button>
               
               {showAdvanced && (
-                <div className="mt-4 space-y-4 pt-4 border-t border-slate-200 dark:border-slate-700">
+                <div className="mt-4 space-y-4 pt-4 border-t border-border">
                   {/* Elbow & Thermal Expansion */}
-                  <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
+                  <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
                     Thermal Expansion
                   </div>
                   <Toggle
@@ -1939,7 +1939,7 @@ function CalculatorPageInner() {
                   )}
                   
                   {/* In-Line Components */}
-                  <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mt-4 mb-2">
+                  <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mt-4 mb-2">
                     In-Line Components
                   </div>
                   <Toggle
@@ -1962,7 +1962,7 @@ function CalculatorPageInner() {
                   )}
                   
                   {/* Special Configurations */}
-                  <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mt-4 mb-2">
+                  <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mt-4 mb-2">
                     Special Configurations
                   </div>
                   <Toggle
@@ -2002,7 +2002,7 @@ function CalculatorPageInner() {
                   />
                   
                   {/* Branch Piping */}
-                  <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mt-4 mb-2">
+                  <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mt-4 mb-2">
                     Branch Piping
                   </div>
                   <Toggle
@@ -2031,7 +2031,7 @@ function CalculatorPageInner() {
                   )}
                   
                   {/* Special Cases */}
-                  <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mt-4 mb-2">
+                  <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mt-4 mb-2">
                     Special Cases
                   </div>
                   <Toggle
@@ -2051,7 +2051,7 @@ function CalculatorPageInner() {
                         placeholder="Temperature of inner (carrier) pipe"
                         min={0}
                       />
-                      <p className="text-xs text-slate-500 dark:text-slate-400">
+                      <p className="text-xs text-muted-foreground">
                         Span based on containment pipe material with carrier pipe temperature (40 05 19, Part 6.2)
                       </p>
                     </div>
@@ -2066,15 +2066,15 @@ function CalculatorPageInner() {
                   {/* Plastic Piping Rules - Only show for plastic materials */}
                   {material && ['PVC Schedule 40', 'PVC Schedule 80', 'CPVC', 'PP', 'PVDF'].includes(material) && (
                     <>
-                      <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mt-4 mb-2 flex items-center gap-2">
-                        <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                      <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mt-4 mb-2 flex items-center gap-2">
+                        <span className="w-2 h-2 bg-brand rounded-full"></span>
                         Plastic Piping Rules (40 05 19, Section 1.5.K)
                       </div>
-                      <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800 mb-3">
-                        <p className="text-xs text-blue-700 dark:text-blue-300">
+                      <div className="p-3 bg-brand/5 rounded-xl border border-brand/20 mb-3">
+                        <p className="text-xs text-brand">
                           <strong>Automatic Rules Applied:</strong>
                         </p>
-                        <ul className="text-xs text-blue-600 dark:text-blue-400 mt-1 space-y-1 list-disc list-inside">
+                        <ul className="text-xs text-brand mt-1 space-y-1 list-disc list-inside">
                           <li>No friction-type anchors (Cush-a-Clamp) - causes pipe stress</li>
                           <li>No metal in direct contact - use GF Stress Less or protective wrap</li>
                         </ul>
@@ -2122,11 +2122,11 @@ function CalculatorPageInner() {
                 disabled={!isFormValid || isCalculating}
                 className={cn(
                   "w-full h-14 rounded-xl font-semibold text-white transition-all duration-300",
-                  "bg-gradient-to-r from-blue-500 to-indigo-600",
-                  "hover:from-blue-600 hover:to-indigo-700",
+                  "bg-brand",
+                  "hover:bg-brand/90",
                   "active:scale-[0.98]",
                   "disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100",
-                  "shadow-xl shadow-blue-500/30",
+                  "shadow-xl shadow-brand/30",
                   "flex items-center justify-center gap-2"
                 )}
               >
@@ -2161,14 +2161,14 @@ function CalculatorPageInner() {
             
             {isCalculating ? (
               <div className="space-y-4 animate-pulse">
-                <div className="h-32 rounded-2xl bg-slate-200/60 dark:bg-slate-700/40" />
+                <div className="h-32 rounded-2xl bg-muted" />
                 <div className="grid grid-cols-4 gap-4">
                   {[...Array(4)].map((_, i) => (
-                    <div key={i} className="h-20 rounded-2xl bg-slate-200/60 dark:bg-slate-700/40" />
+                    <div key={i} className="h-20 rounded-2xl bg-muted" />
                   ))}
                 </div>
-                <div className="h-48 rounded-2xl bg-slate-200/60 dark:bg-slate-700/40" />
-                <div className="h-36 rounded-2xl bg-slate-200/60 dark:bg-slate-700/40" />
+                <div className="h-48 rounded-2xl bg-muted" />
+                <div className="h-36 rounded-2xl bg-muted" />
               </div>
             ) : result ? (
               <ResultsDisplay
@@ -2179,13 +2179,13 @@ function CalculatorPageInner() {
               />
             ) : (
               <Card className="p-12 flex flex-col items-center justify-center text-center h-full min-h-[400px]">
-                <div className="p-4 rounded-2xl bg-slate-100 dark:bg-slate-800 mb-4">
-                  <Calculator className="w-8 h-8 text-slate-400" />
+                <div className="p-4 rounded-2xl bg-muted mb-4">
+                  <Calculator className="w-8 h-8 text-muted-foreground" />
                 </div>
-                <h3 className="text-lg font-semibold text-slate-700 dark:text-slate-300">
+                <h3 className="text-lg font-semibold text-foreground">
                   Ready to Calculate
                 </h3>
-                <p className="text-sm text-slate-500 dark:text-slate-400 mt-2 max-w-xs">
+                <p className="text-sm text-muted-foreground mt-2 max-w-xs">
                   Fill in the pipe properties and installation details, then click Calculate to get support requirements with full citations.
                 </p>
               </Card>
@@ -2201,7 +2201,7 @@ export default function CalculatorPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center">
-        <div className="w-6 h-6 border-2 border-blue-500/30 border-t-blue-500 rounded-full animate-spin" />
+        <div className="w-6 h-6 border-2 border-brand/30 border-t-brand rounded-full animate-spin" />
       </div>
     }>
       <CalculatorPageInner />

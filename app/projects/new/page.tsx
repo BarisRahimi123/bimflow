@@ -3,7 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, FolderPlus, Loader2 } from "lucide-react";
+import { FolderPlus, Loader2 } from "lucide-react";
+import { SiteHeader } from "@/components/site-header";
+import { SiteFooter } from "@/components/site-footer";
 
 export default function NewProjectPage() {
   const router = useRouter();
@@ -39,22 +41,14 @@ export default function NewProjectPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50 dark:from-slate-950 dark:via-blue-950/20 dark:to-slate-950">
-      <header className="border-b bg-white/80 backdrop-blur-sm dark:bg-slate-900/80 sticky top-0 z-50">
-        <div className="container mx-auto px-6 h-16 flex items-center gap-4">
-          <Link href="/projects" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
-            <ArrowLeft className="w-4 h-4" /> Projects
-          </Link>
-          <div className="h-6 w-px bg-border" />
-          <h1 className="font-semibold">New Project</h1>
-        </div>
-      </header>
+    <div className="flex min-h-screen flex-col bg-surface">
+      <SiteHeader />
 
-      <main className="container mx-auto px-6 py-12 max-w-xl">
+      <main className="container mx-auto px-6 flex-1 py-12 max-w-xl">
         <div className="p-8 rounded-2xl border bg-white dark:bg-slate-900/50">
           <div className="flex items-center gap-4 mb-6">
-            <div className="w-12 h-12 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-              <FolderPlus className="w-6 h-6 text-blue-600" />
+            <div className="w-12 h-12 rounded-xl bg-primary/10 dark:bg-primary/20 flex items-center justify-center">
+              <FolderPlus className="w-6 h-6 text-primary" />
             </div>
             <div>
               <h2 className="text-xl font-semibold">Create New Project</h2>
@@ -73,7 +67,7 @@ export default function NewProjectPage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="e.g., Building 241 Fab"
-                className="w-full px-4 py-2 rounded-lg border bg-background focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 rounded-lg border bg-background focus:outline-none focus:ring-2 focus:ring-primary"
                 required
               />
             </div>
@@ -88,7 +82,7 @@ export default function NewProjectPage() {
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Optional description for this project..."
                 rows={3}
-                className="w-full px-4 py-2 rounded-lg border bg-background focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                className="w-full px-4 py-2 rounded-lg border bg-background focus:outline-none focus:ring-2 focus:ring-primary resize-none"
               />
             </div>
 
@@ -108,7 +102,7 @@ export default function NewProjectPage() {
               <button
                 type="submit"
                 disabled={!name.trim() || isCreating}
-                className="flex-1 px-4 py-2 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors inline-flex items-center justify-center gap-2"
+                className="flex-1 px-4 py-2 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors inline-flex items-center justify-center gap-2"
               >
                 {isCreating ? (
                   <>
@@ -123,6 +117,7 @@ export default function NewProjectPage() {
           </form>
         </div>
       </main>
+      <SiteFooter />
     </div>
   );
 }

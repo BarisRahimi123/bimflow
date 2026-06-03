@@ -21,6 +21,8 @@ interface DesignerPanelProps {
   nodeCount: number;
 }
 
+type NodeData = Record<string, string | number | boolean | null | undefined>;
+
 export function DesignerPanel({
   selectedNode,
   onUpdateNode,
@@ -113,11 +115,11 @@ export function DesignerPanel({
                     {selectedNode.data?.isCalculated ? "Auto-calculated" : "Manually placed"}
                   </div>
                 </div>
-                {selectedNode.data?.distanceFromStart && (
+                {selectedNode.data?.distanceFromStart ? (
                   <div className="text-xs text-slate-500">
                     {selectedNode.data.distanceFromStart as number} ft from segment start
                   </div>
-                )}
+                ) : null}
               </div>
             )}
             
@@ -127,7 +129,7 @@ export function DesignerPanel({
                 <div>
                   <label className="text-xs text-slate-500 mb-1 block">Equipment Type</label>
                   <select
-                    value={selectedNode.data?.equipmentType || "pump"}
+                    value={(selectedNode.data?.equipmentType as string) || "pump"}
                     onChange={(e) => onUpdateNode(selectedNode.id, { equipmentType: e.target.value })}
                     className="w-full h-8 px-2 text-sm rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800"
                   >
@@ -140,7 +142,7 @@ export function DesignerPanel({
                   <label className="text-xs text-slate-500 mb-1 block">Name/Tag</label>
                   <input
                     type="text"
-                    value={selectedNode.data?.name || ""}
+                    value={(selectedNode.data?.name as string) || ""}
                     onChange={(e) => onUpdateNode(selectedNode.id, { name: e.target.value })}
                     placeholder="e.g., P-101"
                     className="w-full h-8 px-2 text-sm rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800"
@@ -148,14 +150,14 @@ export function DesignerPanel({
                 </div>
               </>
             )}
-            
+
             {/* Elbow Properties */}
             {selectedNode.type === "elbow" && (
               <>
                 <div>
                   <label className="text-xs text-slate-500 mb-1 block">Angle</label>
                   <select
-                    value={selectedNode.data?.angle || 90}
+                    value={(selectedNode.data?.angle as number) || 90}
                     onChange={(e) => onUpdateNode(selectedNode.id, { angle: Number(e.target.value) })}
                     className="w-full h-8 px-2 text-sm rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800"
                   >
@@ -166,7 +168,7 @@ export function DesignerPanel({
                 <div>
                   <label className="text-xs text-slate-500 mb-1 block">Radius</label>
                   <select
-                    value={selectedNode.data?.radius || "long"}
+                    value={(selectedNode.data?.radius as string) || "long"}
                     onChange={(e) => onUpdateNode(selectedNode.id, { radius: e.target.value })}
                     className="w-full h-8 px-2 text-sm rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800"
                   >
@@ -176,13 +178,13 @@ export function DesignerPanel({
                 </div>
               </>
             )}
-            
+
             {/* Anchor Properties */}
             {selectedNode.type === "anchor" && (
               <div>
                 <label className="text-xs text-slate-500 mb-1 block">Anchor Type</label>
                 <select
-                  value={selectedNode.data?.anchorType || "fixed"}
+                  value={(selectedNode.data?.anchorType as string) || "fixed"}
                   onChange={(e) => onUpdateNode(selectedNode.id, { anchorType: e.target.value })}
                   className="w-full h-8 px-2 text-sm rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800"
                 >
@@ -191,14 +193,14 @@ export function DesignerPanel({
                 </select>
               </div>
             )}
-            
+
             {/* Tee Properties */}
             {selectedNode.type === "tee" && (
               <>
                 <div>
                   <label className="text-xs text-slate-500 mb-1 block">Branch Size</label>
                   <select
-                    value={selectedNode.data?.branchSize || "same"}
+                    value={(selectedNode.data?.branchSize as string) || "same"}
                     onChange={(e) => onUpdateNode(selectedNode.id, { branchSize: e.target.value })}
                     className="w-full h-8 px-2 text-sm rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800"
                   >

@@ -1,0 +1,23 @@
+Hey team, quick training on CMC - Certified Model Content.
+
+This is simple but critical, so don't skip it.
+
+When you open a Navisworks model on this project, you'll see a lot of geometry. But here's the thing - not all of it is contract.
+
+Only a specific Selection Set inside that model is certified by the engineer. That's your CMC. That's what you build from. Everything else is just background for reference.
+
+How do you know which Selection Set is certified? Easy. Every CMC model comes with a PDF cover sheet that has the engineer's stamp. That cover sheet tells you the exact model file name and the exact Selection Set name. Match those up, and you've found your contract scope.
+
+Here are the rules, and they're simple:
+
+CMC and stamped PDFs are contract. Everything else - source files, reconstructed models, issued models - is reference only. Always verify against the CMC.
+
+Why does this matter? Because if you model from the wrong geometry - stuff that's not in the certified Selection Set - you're not building from contract documents. That's a problem.
+
+Now, the CMC Guide document has step-by-step instructions with screenshots showing you exactly how to isolate the certified content in Navisworks. Open it up, go through pages 4 to 7, and practice until you've got it.
+
+That's it. CMC is your contract scope. Find the Selection Set, isolate it, build from it.
+
+Questions? Talk to your BIM lead.
+
+Go open that guide and practice!

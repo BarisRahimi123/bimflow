@@ -9,6 +9,7 @@ import {
   FileText, 
   CheckCircle2, 
   AlertCircle,
+  AlertTriangle,
   ExternalLink, 
   Building2,
   Ruler,
@@ -158,20 +159,14 @@ export default function DrawingDetailPage() {
     });
   };
 
-  const getConfidenceColor = (confidence: number) => {
-    if (confidence >= 0.9) return "text-emerald-600 bg-emerald-50 border-emerald-200";
-    if (confidence >= 0.7) return "text-amber-600 bg-amber-50 border-amber-200";
-    return "text-red-600 bg-red-50 border-red-200";
-  };
-
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "complete":
-        return <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100">Complete</Badge>;
+        return <Badge className="bg-success/10 text-success hover:bg-success/10">Complete</Badge>;
       case "processing":
-        return <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100">Processing</Badge>;
+        return <Badge className="bg-primary/10 text-primary hover:bg-primary/10">Processing</Badge>;
       case "error":
-        return <Badge className="bg-red-100 text-red-700 hover:bg-red-100">Error</Badge>;
+        return <Badge className="bg-destructive/10 text-destructive hover:bg-destructive/10">Error</Badge>;
       default:
         return <Badge variant="secondary">Uploaded</Badge>;
     }
@@ -180,7 +175,7 @@ export default function DrawingDetailPage() {
   const filteredLines = drawing?.extractedLines.filter((line) => {
     if (selectedTab === "all") return true;
     if (selectedTab === "verified") return line.verified;
-    if (selectedTab === "review") return !line.verified && line.confidence < 0.9;
+    if (selectedTab === "review") return !line.verified && line.confidence < 0.95;
     return true;
   }) || [];
 
@@ -188,7 +183,7 @@ export default function DrawingDetailPage() {
   const stats = {
     total: drawing?.extractedLines.length || 0,
     verified: drawing?.extractedLines.filter((l) => l.verified).length || 0,
-    needsReview: drawing?.extractedLines.filter((l) => !l.verified && Number(l.confidence) < 0.9).length || 0,
+    needsReview: drawing?.extractedLines.filter((l) => !l.verified && Number(l.confidence) < 0.95).length || 0,
     avgConfidence: drawing?.extractedLines.length
       ? Math.round(
           (drawing.extractedLines.reduce((sum, l) => sum + Number(l.confidence), 0) /
@@ -200,13 +195,13 @@ export default function DrawingDetailPage() {
   // Loading state
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-surface">
         <div className="text-center">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center mb-6 mx-auto shadow-lg shadow-blue-500/25">
-            <Loader2 className="w-8 h-8 text-white animate-spin" />
+          <div className="w-16 h-16 rounded-2xl bg-primary flex items-center justify-center mb-6 mx-auto shadow-md">
+            <Loader2 className="w-8 h-8 text-primary-foreground animate-spin" />
           </div>
           <h2 className="text-xl font-semibold mb-2">Loading Drawing</h2>
-          <p className="text-slate-500">Fetching extraction results...</p>
+          <p className="text-muted-foreground">Fetching extraction results...</p>
         </div>
       </div>
     );
@@ -215,13 +210,13 @@ export default function DrawingDetailPage() {
   // Error state
   if (error && !drawing) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-surface">
         <div className="text-center max-w-md">
-          <div className="w-16 h-16 rounded-2xl bg-red-100 flex items-center justify-center mb-6 mx-auto">
-            <AlertCircle className="w-8 h-8 text-red-600" />
+          <div className="w-16 h-16 rounded-2xl bg-destructive/10 flex items-center justify-center mb-6 mx-auto">
+            <AlertCircle className="w-8 h-8 text-destructive" />
           </div>
           <h2 className="text-xl font-semibold mb-2">Error Loading Drawing</h2>
-          <p className="text-slate-500 mb-6">{error}</p>
+          <p className="text-muted-foreground mb-6">{error}</p>
           <Button onClick={() => router.push(`/projects/${projectId}`)}>
             <ArrowLeft className="w-4 h-4 mr-2" /> Back to Project
           </Button>
@@ -234,26 +229,26 @@ export default function DrawingDetailPage() {
 
   return (
     <TooltipProvider>
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
+      <div className="min-h-screen bg-surface">
         {/* Header */}
-        <header className="sticky top-0 z-50 border-b bg-white/80 backdrop-blur-md">
+        <header className="sticky top-0 z-50 border-b border-border bg-background">
           <div className="container mx-auto px-6 h-16 flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Link
                 href={`/projects/${projectId}`}
-                className="flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-colors"
+                className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
               >
                 <ArrowLeft className="w-4 h-4" />
                 <span className="text-sm font-medium">Back</span>
               </Link>
               <Separator orientation="vertical" className="h-6" />
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
-                  <FileText className="w-4 h-4 text-white" />
+                <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+                  <FileText className="w-4 h-4 text-brand" />
                 </div>
                 <div>
                   <h1 className="font-semibold truncate max-w-[300px]">{drawing.fileName}</h1>
-                  <div className="flex items-center gap-2 text-xs text-slate-500">
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     {getStatusBadge(drawing.status)}
                     <span>•</span>
                     <span>{format(new Date(drawing.createdAt), "MMM d, yyyy")}</span>
@@ -267,7 +262,7 @@ export default function DrawingDetailPage() {
                 <Button
                   onClick={startProcessing}
                   disabled={processing}
-                  className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
+                  className="bg-primary hover:bg-primary/90"
                 >
                   {processing ? (
                     <>
@@ -300,35 +295,35 @@ export default function DrawingDetailPage() {
         <main className="container mx-auto px-6 py-8">
           {/* Processing State */}
           {drawing.status === "processing" && (
-            <Card className="mb-8 border-blue-200 bg-gradient-to-br from-blue-50 to-white">
+            <Card className="mb-8 border-primary/20 bg-primary/5">
               <CardContent className="pt-6">
                 <div className="flex items-center gap-4 mb-4">
-                  <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center">
-                    <Loader2 className="w-6 h-6 text-blue-600 animate-spin" />
+                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                    <Loader2 className="w-6 h-6 text-primary animate-spin" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-semibold text-blue-900">Extraction in Progress</h3>
-                    <p className="text-sm text-blue-700">Analyzing your P&ID drawing...</p>
+                    <h3 className="font-semibold text-primary">Extraction in Progress</h3>
+                    <p className="text-sm text-primary/80">Analyzing your P&ID drawing...</p>
                   </div>
                 </div>
-                <Progress value={66} className="h-2 bg-blue-100" />
+                <Progress value={66} className="h-2 bg-primary/10" />
               </CardContent>
             </Card>
           )}
 
           {/* Error State */}
           {drawing.status === "error" && (
-            <Card className="mb-8 border-red-200 bg-gradient-to-br from-red-50 to-white">
+            <Card className="mb-8 border-destructive/20 bg-destructive/5">
               <CardContent className="pt-6">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-red-100 flex items-center justify-center">
-                    <AlertCircle className="w-6 h-6 text-red-600" />
+                  <div className="w-12 h-12 rounded-xl bg-destructive/10 flex items-center justify-center">
+                    <AlertCircle className="w-6 h-6 text-destructive" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-semibold text-red-900">Extraction Failed</h3>
-                    <p className="text-sm text-red-700">{drawing.errorMessage || "An error occurred during processing"}</p>
+                    <h3 className="font-semibold text-foreground">Extraction Failed</h3>
+                    <p className="text-sm text-muted-foreground">{drawing.errorMessage || "An error occurred during processing"}</p>
                   </div>
-                  <Button onClick={startProcessing} variant="outline" className="border-red-300 text-red-700 hover:bg-red-50">
+                  <Button onClick={startProcessing} variant="outline" className="border-destructive/30 text-destructive hover:bg-destructive/5">
                     <RefreshCw className="w-4 h-4 mr-2" />
                     Retry
                   </Button>
@@ -337,65 +332,57 @@ export default function DrawingDetailPage() {
             </Card>
           )}
 
-          {/* Stats Cards */}
+          {/* Summary Strip */}
           {drawing.status === "complete" && (
-            <div className="grid grid-cols-4 gap-4 mb-8">
-              <Card className="border-0 shadow-sm bg-white">
-                <CardContent className="pt-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-slate-500">Total Lines</p>
-                      <p className="text-3xl font-bold text-slate-900">{stats.total}</p>
+            <Card className="border-0 shadow-sm mb-8">
+              <CardContent className="py-6">
+                <div className="flex flex-col gap-6 md:flex-row md:items-center">
+                  {/* Hero: verification progress */}
+                  <div className="md:w-72 md:shrink-0">
+                    <div className="flex items-baseline justify-between mb-2">
+                      <p className="text-sm font-medium text-muted-foreground">Verification progress</p>
+                      <p className="text-sm font-semibold tabular-nums">
+                        {stats.verified}<span className="text-muted-foreground">/{stats.total}</span>
+                      </p>
                     </div>
-                    <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center">
-                      <Layers className="w-6 h-6 text-blue-600" />
+                    <Progress
+                      value={stats.total ? Math.round((stats.verified / stats.total) * 100) : 0}
+                      className="h-2"
+                    />
+                    <p className="mt-2 text-xs text-muted-foreground">
+                      {stats.needsReview > 0
+                        ? `${stats.needsReview} line${stats.needsReview === 1 ? "" : "s"} still need review`
+                        : "All lines reviewed"}
+                    </p>
+                  </div>
+
+                  <Separator orientation="vertical" className="hidden md:block h-14" />
+
+                  {/* Supporting metrics */}
+                  <div className="grid grid-cols-3 flex-1 divide-x divide-border">
+                    <div className="px-4 first:pl-0">
+                      <p className="text-xs font-medium text-muted-foreground">Total lines</p>
+                      <p className="text-2xl font-bold tabular-nums">{stats.total}</p>
+                    </div>
+                    <div className="px-4">
+                      <p className="text-xs font-medium text-muted-foreground">Needs review</p>
+                      {stats.needsReview > 0 ? (
+                        <span className="inline-flex items-center gap-1.5 rounded-md bg-brand/15 px-2 py-0.5 text-2xl font-bold tabular-nums text-brand-foreground">
+                          <AlertTriangle className="w-4 h-4 text-brand-foreground" />
+                          {stats.needsReview}
+                        </span>
+                      ) : (
+                        <p className="text-2xl font-bold tabular-nums text-foreground">0</p>
+                      )}
+                    </div>
+                    <div className="px-4">
+                      <p className="text-xs font-medium text-muted-foreground">Avg confidence</p>
+                      <p className="text-2xl font-bold tabular-nums">{stats.avgConfidence}%</p>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-              
-              <Card className="border-0 shadow-sm bg-white">
-                <CardContent className="pt-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-slate-500">Verified</p>
-                      <p className="text-3xl font-bold text-emerald-600">{stats.verified}</p>
-                    </div>
-                    <div className="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center">
-                      <CheckCircle2 className="w-6 h-6 text-emerald-600" />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card className="border-0 shadow-sm bg-white">
-                <CardContent className="pt-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-slate-500">Needs Review</p>
-                      <p className="text-3xl font-bold text-amber-600">{stats.needsReview}</p>
-                    </div>
-                    <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center">
-                      <AlertCircle className="w-6 h-6 text-amber-600" />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card className="border-0 shadow-sm bg-white">
-                <CardContent className="pt-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-slate-500">Avg Confidence</p>
-                      <p className="text-3xl font-bold text-slate-900">{stats.avgConfidence}%</p>
-                    </div>
-                    <div className="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center">
-                      <CheckCircle2 className="w-6 h-6 text-purple-600" />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+                </div>
+              </CardContent>
+            </Card>
           )}
 
           {/* Main Content */}
@@ -408,7 +395,7 @@ export default function DrawingDetailPage() {
                     <div className="flex items-center justify-between">
                       <CardTitle>Extracted Piping Lines</CardTitle>
                       <Tabs value={selectedTab} onValueChange={setSelectedTab}>
-                        <TabsList className="bg-slate-100">
+                        <TabsList className="bg-muted">
                           <TabsTrigger value="all">All ({stats.total})</TabsTrigger>
                           <TabsTrigger value="verified">Verified ({stats.verified})</TabsTrigger>
                           <TabsTrigger value="review">Review ({stats.needsReview})</TabsTrigger>
@@ -419,7 +406,7 @@ export default function DrawingDetailPage() {
                   <CardContent className="pt-0">
                     <div className="space-y-3">
                       {filteredLines.length === 0 ? (
-                        <div className="text-center py-12 text-slate-500">
+                        <div className="text-center py-12 text-muted-foreground">
                           <Layers className="w-12 h-12 mx-auto mb-4 opacity-30" />
                           <p>No lines in this category</p>
                         </div>
@@ -447,7 +434,7 @@ export default function DrawingDetailPage() {
                     <CardTitle className="text-base">Drawing Preview</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="aspect-[4/3] rounded-lg bg-slate-100 flex items-center justify-center overflow-hidden">
+                    <div className="aspect-[4/3] rounded-lg bg-muted flex items-center justify-center overflow-hidden">
                       {drawing.fileUrl ? (
                         <img
                           src={drawing.fileUrl}
@@ -458,7 +445,7 @@ export default function DrawingDetailPage() {
                           }}
                         />
                       ) : (
-                        <FileText className="w-16 h-16 text-slate-300" />
+                        <FileText className="w-16 h-16 text-muted-foreground/40" />
                       )}
                     </div>
                     <div className="mt-4 flex gap-2">
@@ -504,11 +491,11 @@ export default function DrawingDetailPage() {
             <Card className="border-0 shadow-sm">
               <CardContent className="py-16">
                 <div className="text-center max-w-md mx-auto">
-                  <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-100 to-blue-50 flex items-center justify-center mx-auto mb-6">
-                    <Layers className="w-10 h-10 text-blue-600" />
+                  <div className="w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-6">
+                    <Layers className="w-10 h-10 text-primary" />
                   </div>
                   <h3 className="text-xl font-semibold mb-2">Ready for Extraction</h3>
-                  <p className="text-slate-500 mb-6">
+                  <p className="text-muted-foreground mb-6">
                     PIDFlow will analyze your P&ID drawing and extract all piping lines with
                     tolerances, support spans, and LOD requirements — fully cited.
                   </p>
@@ -516,7 +503,7 @@ export default function DrawingDetailPage() {
                     onClick={startProcessing}
                     disabled={processing}
                     size="lg"
-                    className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
+                    className="bg-primary hover:bg-primary/90"
                   >
                     {processing ? (
                       <>
@@ -563,13 +550,29 @@ function LineCard({
   const confidencePercent = Math.round(Number(line.confidence) * 100);
   
   const getConfidenceBadge = () => {
-    if (confidencePercent >= 90) {
-      return <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100">{confidencePercent}%</Badge>;
+    // Bands per DESIGN.md: high ≥0.95, medium 0.85–0.94, low <0.85.
+    if (confidencePercent >= 95) {
+      return (
+        <Badge className="gap-1 bg-success/10 text-success hover:bg-success/10">
+          <CheckCircle2 className="w-3 h-3" />
+          High · {confidencePercent}%
+        </Badge>
+      );
     }
-    if (confidencePercent >= 70) {
-      return <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-100">{confidencePercent}%</Badge>;
+    if (confidencePercent >= 85) {
+      return (
+        <Badge className="gap-1 bg-brand/10 text-brand-foreground hover:bg-brand/10">
+          <AlertTriangle className="w-3 h-3" />
+          Review · {confidencePercent}%
+        </Badge>
+      );
     }
-    return <Badge className="bg-red-100 text-red-700 hover:bg-red-100">{confidencePercent}%</Badge>;
+    return (
+      <Badge className="gap-1 bg-destructive/10 text-destructive hover:bg-destructive/10">
+        <AlertCircle className="w-3 h-3" />
+        Low · {confidencePercent}%
+      </Badge>
+    );
   };
 
   const renderCitation = (citation?: Citation, label?: string) => {
@@ -585,7 +588,7 @@ function LineCard({
     return (
       <Tooltip>
         <TooltipTrigger asChild>
-          <span className="inline-flex items-center gap-1 text-xs text-blue-600 cursor-help">
+          <span className="inline-flex items-center gap-1 text-xs text-primary cursor-help">
             <Info className="w-3 h-3" />
             <span className="underline underline-offset-2 decoration-dotted">Cited</span>
           </span>
@@ -600,33 +603,34 @@ function LineCard({
 
   return (
     <div className={cn(
-      "border rounded-xl transition-all",
-      expanded ? "bg-white shadow-md" : "bg-slate-50/50 hover:bg-white hover:shadow-sm"
+      "border border-border rounded-xl transition-all",
+      expanded ? "bg-background shadow-md" : "bg-surface hover:bg-background hover:shadow-sm"
     )}>
       {/* Header */}
       <button
         onClick={onToggle}
-        className="w-full px-4 py-3 flex items-center gap-4 text-left"
+        aria-expanded={expanded}
+        className="w-full px-4 py-3 flex items-center gap-4 text-left rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
       >
         <div className={cn(
           "w-8 h-8 rounded-lg flex items-center justify-center transition-colors",
-          expanded ? "bg-blue-100" : "bg-slate-100"
+          expanded ? "bg-primary/10" : "bg-muted"
         )}>
           {expanded ? (
-            <ChevronDown className="w-4 h-4 text-blue-600" />
+            <ChevronDown className="w-4 h-4 text-primary" />
           ) : (
-            <ChevronRight className="w-4 h-4 text-slate-400" />
+            <ChevronRight className="w-4 h-4 text-muted-foreground" />
           )}
         </div>
         
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <span className="font-mono font-semibold text-slate-900">{line.lineNumber}</span>
+            <span className="font-mono font-semibold text-foreground">{line.lineNumber}</span>
             {line.verified && (
-              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+              <CheckCircle2 className="w-4 h-4 text-success" />
             )}
           </div>
-          <div className="flex items-center gap-2 text-sm text-slate-500">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
             {line.serviceCode && (
               <Badge variant="outline" className="font-mono text-xs">{line.serviceCode}</Badge>
             )}
@@ -650,10 +654,10 @@ function LineCard({
           
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
             {/* Tolerance */}
-            <div className="p-3 rounded-lg bg-slate-50">
+            <div className="p-3 rounded-lg bg-muted">
               <div className="flex items-center gap-2 mb-1">
-                <Ruler className="w-4 h-4 text-slate-400" />
-                <span className="text-xs font-medium text-slate-500">Tolerance</span>
+                <Ruler className="w-4 h-4 text-muted-foreground" />
+                <span className="text-xs font-medium text-muted-foreground">Tolerance</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="font-semibold">{line.toleranceValue || "—"}</span>
@@ -662,10 +666,10 @@ function LineCard({
             </div>
 
             {/* Max Span */}
-            <div className="p-3 rounded-lg bg-slate-50">
+            <div className="p-3 rounded-lg bg-muted">
               <div className="flex items-center gap-2 mb-1">
-                <ThermometerSun className="w-4 h-4 text-slate-400" />
-                <span className="text-xs font-medium text-slate-500">Max Span</span>
+                <ThermometerSun className="w-4 h-4 text-muted-foreground" />
+                <span className="text-xs font-medium text-muted-foreground">Max Span</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="font-semibold">{line.maxSpan ? `${line.maxSpan} ft` : "—"}</span>
@@ -674,10 +678,10 @@ function LineCard({
             </div>
 
             {/* LOD */}
-            <div className="p-3 rounded-lg bg-slate-50">
+            <div className="p-3 rounded-lg bg-muted">
               <div className="flex items-center gap-2 mb-1">
-                <Layers className="w-4 h-4 text-slate-400" />
-                <span className="text-xs font-medium text-slate-500">Include in Model</span>
+                <Layers className="w-4 h-4 text-muted-foreground" />
+                <span className="text-xs font-medium text-muted-foreground">Include in Model</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="font-semibold">
@@ -688,10 +692,10 @@ function LineCard({
             </div>
 
             {/* Line Class */}
-            <div className="p-3 rounded-lg bg-slate-50">
+            <div className="p-3 rounded-lg bg-muted">
               <div className="flex items-center gap-2 mb-1">
-                <FileText className="w-4 h-4 text-slate-400" />
-                <span className="text-xs font-medium text-slate-500">Line Class</span>
+                <FileText className="w-4 h-4 text-muted-foreground" />
+                <span className="text-xs font-medium text-muted-foreground">Line Class</span>
               </div>
               <span className="font-semibold font-mono">{line.lineClass || "—"}</span>
             </div>
@@ -702,7 +706,7 @@ function LineCard({
             <div className="grid grid-cols-2 gap-4 mb-4">
               {line.connectedEquipment.length > 0 && (
                 <div>
-                  <p className="text-xs font-medium text-slate-500 mb-2">Connected Equipment</p>
+                  <p className="text-xs font-medium text-muted-foreground mb-2">Connected Equipment</p>
                   <div className="flex flex-wrap gap-1">
                     {line.connectedEquipment.map((eq, i) => (
                       <Badge key={i} variant="outline" className="text-xs">{eq}</Badge>
@@ -712,7 +716,7 @@ function LineCard({
               )}
               {line.valves.length > 0 && (
                 <div>
-                  <p className="text-xs font-medium text-slate-500 mb-2">Valves</p>
+                  <p className="text-xs font-medium text-muted-foreground mb-2">Valves</p>
                   <div className="flex flex-wrap gap-1">
                     {line.valves.map((v, i) => (
                       <Badge key={i} variant="outline" className="text-xs">{v}</Badge>
@@ -726,23 +730,23 @@ function LineCard({
           {/* Vendor Products */}
           {line.vendorProducts.length > 0 && (
             <div className="mb-4">
-              <p className="text-xs font-medium text-slate-500 mb-2">Vendor Products</p>
+              <p className="text-xs font-medium text-muted-foreground mb-2">Vendor Products</p>
               <div className="space-y-2">
                 {line.vendorProducts.map((product) => (
                   <div
                     key={product.id}
-                    className="flex items-center justify-between p-2 rounded-lg bg-slate-50 border"
+                    className="flex items-center justify-between p-2 rounded-lg bg-muted border border-border"
                   >
                     <div className="flex items-center gap-3">
-                      <Building2 className="w-4 h-4 text-slate-400" />
+                      <Building2 className="w-4 h-4 text-muted-foreground" />
                       <div>
                         <p className="text-sm font-medium">
                           {product.vendor}
                           {product.isPreferred && (
-                            <Badge className="ml-2 bg-blue-100 text-blue-700 text-xs">Preferred</Badge>
+                            <Badge className="ml-2 bg-primary/10 text-primary text-xs">Preferred</Badge>
                           )}
                         </p>
-                        <p className="text-xs text-slate-500">{product.productName || product.modelNumber}</p>
+                        <p className="text-xs text-muted-foreground">{product.productName || product.modelNumber}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
@@ -761,14 +765,14 @@ function LineCard({
           )}
 
           {/* Actions */}
-          <div className="flex items-center justify-between gap-2 pt-2 border-t">
+          <div className="flex items-center justify-between gap-2 pt-2 border-t border-border">
             <Link
               href={`/calculator?${new URLSearchParams({
                 ...(line.material ? { material: line.material } : {}),
                 ...(line.size ? { size: line.size } : {}),
                 ...(line.serviceCode ? { service: mapServiceToType(line.serviceCode) } : {}),
               }).toString()}`}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-primary bg-primary/10 hover:bg-primary/20 rounded-lg transition-colors"
             >
               <Ruler className="w-3.5 h-3.5" />
               Calculate Supports
@@ -776,14 +780,14 @@ function LineCard({
             <div className="flex items-center gap-2">
               {!line.verified && (
                 <>
-                  <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700 hover:bg-red-50">
+                  <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive hover:bg-destructive/5">
                     <X className="w-4 h-4 mr-1" />
                     Reject
                   </Button>
                   <Button
                     size="sm"
                     onClick={onVerify}
-                    className="bg-emerald-600 hover:bg-emerald-700"
+                    className="bg-success text-white hover:bg-success/90"
                   >
                     <Check className="w-4 h-4 mr-1" />
                     Verify
@@ -791,7 +795,7 @@ function LineCard({
                 </>
               )}
               {line.verified && (
-                <span className="text-xs text-emerald-600 flex items-center gap-1">
+                <span className="text-xs text-success flex items-center gap-1">
                   <CheckCircle2 className="w-4 h-4" />
                   Verified
                   {line.verifiedAt && ` on ${format(new Date(line.verifiedAt), "MMM d")}`}

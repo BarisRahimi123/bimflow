@@ -1,0 +1,241 @@
+Welcome to this training module on Certified Model Content, also known as CMC.
+
+This is one of the most important concepts you need to understand for BIM coordination on this project. If you get this wrong, you might be working with the wrong information - and that's a problem you don't want to have.
+
+So let's break it down step by step.
+
+I recommend opening the CMC Guide document and following along with me. There are some visuals and screenshots that will help you understand the concepts better.
+
+Let's start with the big question: What is Certified Model Content?
+
+On this project, design information is delivered in two main formats. You get traditional 2D PDF sheets. And you get 3D Navisworks models.
+
+But here's the critical part. Not everything in a Navisworks model file is contract content.
+
+Let me say that again. Not everything in the Navisworks file is contract content.
+
+A Navisworks NWD file might contain a lot of geometry - multiple disciplines, background context, reference information. But only a SPECIFIC PORTION of that geometry is certified and stamped by the engineer.
+
+That specific portion is called the Certified Model Content, or CMC.
+
+The CMC is identified by a Selection Set inside the Navisworks model. And that Selection Set name is listed on a PDF cover sheet that has the engineer's stamp.
+
+So think of it this way: The engineer is saying, "I certify THIS specific selection of geometry in THIS specific model file."
+
+Everything else in the model? It's context. It's background. But it's not certified. It's not contract.
+
+This is a fundamental concept. The Selection Set in the CMC model, as identified by the stamped cover sheet, IS your contract scope.
+
+Now let's talk about where to find these files. Open your CMC Guide document and look at the BIM 360 folder structure section.
+
+The IFC and DRB packages are delivered through BIM 360 Docs. Inside each package, you'll find a BIM folder that contains all the BIM deliverables.
+
+Here's the folder structure you need to know:
+
+The Drawings folder, sometimes labeled DWGs, contains all the drawing files associated with the package. Both 2D and 3D DWG source files are delivered here.
+
+The Models folder has several subfolders.
+
+Inside Models, you have Navis, and inside Navis you have Certified. This is where the per-discipline contract models live. These are your CMC files - the certified model content.
+
+Also inside Navis, you have Issued. These are reconciled models that contain all previously issued geometry. But these are FOR REFERENCE ONLY. They are not contract documents.
+
+You also have XM. This folder contains models of any scope that has been DELETED from previously released scope. Only DRB packages will have XM files.
+
+Then there's QAQC, which contains clash models and adjudication "orb" models. We'll talk about those later.
+
+And finally, RVT, which contains the Revit source files.
+
+Now, this is a good time to go over the six essential rules for working with CMC. These are critical, so listen carefully.
+
+Rule number one: Always use CMC and PDF content per your contract.
+
+The CMC models and stamped PDF drawings ARE your contract documents. The selection sets in each CMC model represent what the engineer of record has stamped. If you need to know whether your scope is model-based or drawing-based, check the A-11 Deliverables Format Table.
+
+Rule number two: Design source files are for reference only.
+
+Let me emphasize this. Only the CMC models and stamped PDFs are contract documents. The source files - the Revit files, the CADWorx files - they're provided so you can reference them. But they are NOT certified. Always verify source files against the contract documents.
+
+Rule number three: Reconstructed CMC models are for reference only.
+
+Sometimes the team will provide reconstructed models that contain only the exported CMC geometry. These are lighter and easier to use. But they are NOT contract documents. Always verify against the original CMC.
+
+Rule number four: DM underscore ISSUED models are for reference only.
+
+The Design Model Issued files are consolidated models that contain all previous IFC and DRB content. They're useful for seeing the full picture. But regardless, the CMC model and its selection set remain the contract document.
+
+Rule number five: XM models will be provided in DRBs and will contain all deleted scope.
+
+Think of XM files as the equivalent of clouding deleted content on a PDF drawing. If scope has been deleted, you'll find it in the XM model. Note that scope that's been MOVED to a new location is not considered deleted.
+
+Rule number six: Review the adjudicated viewpoints within the CMC.
+
+Each CMC issuance includes a QAQC Navisworks model that shows how clashes have been adjudicated. We'll cover how to review these later in this training.
+
+Those six rules are your foundation. Know them. Follow them.
+
+Now let's talk about file naming conventions. Open your document to the file naming section.
+
+CMC Navisworks models follow a specific naming pattern.
+
+The format is: Year Month Day, underscore, Package, underscore, Building, dash, Level and Sector, dash, GEN-DM-JEG, underscore, Discipline, underscore, Issuance, dot NWD.
+
+For example, a file named 240403 underscore EP-01 underscore 100XX-AAAAJ-GEN-DM-JEG underscore M0 underscore IFC dot nwd tells you:
+
+The date is April 3rd, 2024.
+The package is EP-01.
+The building and level information follows.
+M0 indicates the discipline.
+IFC indicates this is an Issued for Construction package.
+
+Understanding this naming convention helps you quickly identify what you're looking at.
+
+Now let's talk about how to identify the actual contract scope within a CMC model.
+
+Look at the CMC PDF Coversheets section in your document.
+
+Every CMC model has an associated PDF cover sheet. This cover sheet contains the engineer's seal - their stamp of certification.
+
+On that cover sheet, you'll see text that says something like: "Seal applied to the content shown in Navisworks model" - and then it lists the specific model file name - "Selection Set" - and then it lists the specific selection set name.
+
+That text is telling you exactly which selection set in which model file is certified.
+
+When you open the Navisworks model, you need to find that selection set. You can access selection sets through the Sets window, or through the Selection Tree window by using the dropdown menu at the top and selecting Sets.
+
+Selection Set icons appear as a small circle with a blue square inside. Each CMC selection set is unique to its specific model.
+
+Here's a common problem people run into.
+
+When you open an NWD model, you might see one of three situations.
+
+Situation one: The view already shows the certified scope isolated correctly. Great - you can start working.
+
+Situation two: The design team left everything unhidden, so you see all the context and background, and it's hard to tell what's actually certified. This is confusing but fixable.
+
+Situation three: The selection set isn't working properly. This occasionally happens, and Hoffman will reissue corrected models when identified.
+
+To correctly isolate the CMC scope, follow these steps. And I recommend following along in your document where these steps are shown with screenshots.
+
+Step one: Open the model and click Unhide All in the ribbon. This ensures everything is visible first.
+
+Step two: Go to the Sets dialogue box and click on the Selection Set that was identified on the cover sheet.
+
+Step three: Go back to the ribbon and click Hide Unselected.
+
+Now you're seeing only the certified content.
+
+If the selection set doesn't select anything when you click it in the Sets window, try this: Open the Selection Tree dialogue box, change the dropdown from Standard to Sets, and then select the selection set from there.
+
+Let's talk about clash reporting and QAQC.
+
+The design team provides clash documentation with each CMC issuance. You'll receive an NWD file, an XML file, and an Excel spreadsheet listing all the clashes.
+
+In the Navisworks model, clashes are shown using colored "orbs" - spheres that mark clash locations. These orbs contain metadata about how each clash was adjudicated.
+
+To see the adjudication details, make sure your selection resolution is set to First Object. Then select a clash orb and look at the Attributes tab in the Properties panel.
+
+You'll see different adjudication types. Not all of them require action from you. The ones most relevant to subcontractors are:
+
+"To be adjusted in field during installation" - meaning you'll handle this during construction.
+
+"Acceptable encroachment in zone" - meaning the overlap is acceptable and doesn't need to be resolved.
+
+"Acceptable penetration" - meaning the penetration is intentional and approved.
+
+Review these adjudications carefully. They tell you which clashes are already resolved and which ones might need your attention.
+
+Now let's discuss source files.
+
+When you look at the Selection Tree in a CMC model, you'll see different file types.
+
+Files with a DM suffix in the model type were produced from Revit.
+
+Files with a DX suffix were produced from CADWorx.
+
+The actual DWG and RVT source files are included in each package. They're easier to work with because they're smaller and you can manipulate them in their native software.
+
+But remember Rule number two: Source files are for reference only. Always verify against the CMC.
+
+One important thing to understand: The CMC models will not contain ALL contract geometry.
+
+You may need to reference multiple CMC models together, along with other contract documents like P and IDs, one-lines, and specifications, to get the complete picture.
+
+If you find differences between the CMC model and other contract documents, that's a discrepancy. You'll need to submit an RFI to reconcile it. Communicate any discrepancies to your Hoffman construction manager.
+
+Let's talk about Future Scope.
+
+Some CMC models include Future Scope. This is space that's reserved for future systems - things that will be built later.
+
+In CADWorx DWG files, future scope is typically on a layer with a dash F suffix in the layer name. Visually, it appears in dark orange.
+
+In Revit models, future scope is identified by a tag in the Element tab. Look for "Future Build" with a yes or no value.
+
+Be aware of future scope in your coordination. You need to avoid clashing with reserved future space.
+
+Now let's cover how to compare multiple package releases.
+
+When a DRB - a Design Release Bulletin - is issued, it contains changes to previously released scope. It's helpful to create a visual comparison between the original IFC and the DRB to see what changed.
+
+Here's the process. Follow along in your document where these steps are illustrated.
+
+Step one: Open the original IFC discipline model.
+
+Step two: Append the DRB model you want to compare.
+
+Step three: Click Unhide All.
+
+Step four: Select both Certified Selection Sets and click Hide Unselected.
+
+Step five: Select the selection set for the first model - the original IFC.
+
+Step six: With that selection active, right-click on a highlighted piece of geometry. Navigate to Override Item, then Override Color.
+
+Step seven: Select grey from the color palette. You might also want to turn up the transparency.
+
+Step eight: In the Sets dialogue box, expand Status, click on FUTR for future scope, and hide it.
+
+Now you can see the comparison. The original IFC content is grey. The DRB changes are in their original colors - blue, green, beige, whatever the discipline colors are.
+
+This makes it easy to spot what's new or changed.
+
+Remember: Only changed or added scope is in the DRB CMC. Deleted scope is in the XM files. If you need to see deletions, append the XM model and color it red.
+
+Finally, let's talk about viewpoint notes and diamond keynotes.
+
+The design team uses two methods to communicate additional information within CMC models.
+
+The first method is Viewpoint Comments. These are like sticky notes attached to specific views in the model.
+
+To see viewpoint comments, make sure the Comments window is open. Go to the View tab, click Windows, and click Comments.
+
+The second method is Diamond Keynotes, also called Detail Callouts. These are geometric objects in the model - usually diamond shapes - that contain notes in their properties.
+
+To read diamond keynotes, make sure the Properties window is visible. Go to View, Windows, Properties.
+
+For Revit DM files, select the diamond and look at the Elements tab. Find the Remarks property.
+
+For CADWorx DX files, select the diamond and look at the Attributes tab. Find the Remarks property.
+
+Some models use viewpoint comments. Some use diamond keynotes. Some use both. If you don't see either one in a model, it just means the design team didn't have additional information to communicate for that scope.
+
+Alright, let's wrap up with the key takeaways from this training.
+
+Number one: Certified Model Content - CMC - is the ONLY certified geometry in a Navisworks model. It's identified by a specific Selection Set named on a stamped PDF cover sheet.
+
+Number two: Know the six rules. CMC and stamped PDFs are contract. Source files are reference only. Issued models are reference only. XM files show deleted scope. Review adjudicated clashes.
+
+Number three: Use the correct process to isolate CMC scope. Unhide all, select the certified selection set, hide unselected.
+
+Number four: Source files are convenient but must be verified against the CMC.
+
+Number five: Multiple CMC models plus other contract documents together represent your complete scope. Discrepancies require RFIs.
+
+Number six: Use color overrides to compare IFC versus DRB releases.
+
+Number seven: Check viewpoint comments and diamond keynotes for additional information from the design team.
+
+I know this was a lot of information. Take some time to practice opening CMC models, finding the selection sets, and isolating the certified content. The more you do it, the more natural it becomes.
+
+If you have questions, reach out to your project BIM lead or Hoffman construction manager.
+
+Thanks for completing this training. Now go work with those CMC models confidently!

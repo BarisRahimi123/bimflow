@@ -1,0 +1,33 @@
+Hey team, quick training on acquiring project coordinates in Revit.
+
+This is essential. If you skip this step, your model won't align with everyone else's. You'll show up to coordination and your pipes will be floating in space while everyone else's models line up perfectly. Don't be that person.
+
+Here's what you need to understand.
+
+Every Revit model has a Project Base Point. This is the anchor that tells Revit where your model sits in the real world - the northing, easting, and elevation.
+
+When you start a fresh model, your Project Base Point is at zero. That's not where the building is. You need to get the correct coordinates from the project's structural model - that's your reference.
+
+The process is called "Acquire Coordinates." You link in the structural model, and you tell Revit to grab the coordinate system from that link. After that, your model is aligned with everyone else's.
+
+Let me give you the quick overview.
+
+Step one: Open your Revit project.
+
+Step two: Link in the structural S-zero model. When you're linking, make sure the positioning is set to "Auto - Internal Origin to Internal Origin." This is critical. If you pick the wrong option, the link will come in at the wrong spot.
+
+Step three: In a plan view, make sure the Project Base Point is visible. You'll find this under Visibility Graphics, in the Site category. Turn it on so you can see it.
+
+Step four: Go to the Manage tab, click the Coordinates dropdown, and select Acquire Coordinates.
+
+Step five: Your cursor will become active. Hover over the linked model until you see it highlight, then click to select it.
+
+Step six: Revit will confirm the coordinates were acquired. Now check your Project Base Point - it should match the linked model exactly. Same northing, same easting, same elevation.
+
+That's it. You're aligned.
+
+Open the BIM Coordinates Guide document now. It has screenshots for every step showing you exactly what to click and what you should see. Walk through it once with the guide open, and you'll have it down.
+
+If your coordinates don't match after following the steps, check that you selected the right positioning option when you linked the model. That's the most common mistake.
+
+Good luck!

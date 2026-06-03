@@ -28,11 +28,31 @@ import {
   MessageSquare,
   Paperclip,
   ClipboardCheck,
+  Volume2,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { PhaseAudio } from "@/components/phase-audio";
 
 const PDFViewer = dynamic(() => import("@/components/PDFViewer"), { ssr: false });
+
+// Phase narration audio (ElevenLabs exports dropped in /public/audio/playbook).
+// Phase 1 is split into 5 parts; phases 2–7 are a single track each.
+const PHASE_AUDIO: Record<string, string[]> = {
+  setup: [
+    "/audio/playbook/phase-1-1.mp3",
+    "/audio/playbook/phase-1-2.mp3",
+    "/audio/playbook/phase-1-3.mp3",
+    "/audio/playbook/phase-1-4.mp3",
+    "/audio/playbook/phase-1-5.mp3",
+  ],
+  scope: ["/audio/playbook/phase-2.mp3"],
+  pid: ["/audio/playbook/phase-3.mp3"],
+  model: ["/audio/playbook/phase-4.mp3"],
+  check: ["/audio/playbook/phase-5.mp3"],
+  coordinate: ["/audio/playbook/phase-6.mp3"],
+  field: ["/audio/playbook/phase-7.mp3"],
+};
 
 interface Step {
   id: string;
@@ -778,6 +798,7 @@ export default function GuidePage() {
   const [viewingDocPage, setViewingDocPage] = useState<number>(1);
   const [viewingSearchText, setViewingSearchText] = useState<string | undefined>(undefined);
   const [isViewerExpanded, setIsViewerExpanded] = useState(false);
+  const [playAll, setPlayAll] = useState(false);
   const hoverTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Clear hover timer on unmount
@@ -830,27 +851,53 @@ export default function GuidePage() {
     else if (activePhaseIndex > 0) { setActivePhaseIndex(activePhaseIndex - 1); setActiveStepIndex(PHASES[activePhaseIndex - 1].steps.length - 1); }
   };
 
+  // "Play all" walks the narration phase-by-phase. When a phase's tracks finish,
+  // jump to the next phase (which auto-plays); stop after the final phase.
+  const handlePhaseAudioEnded = () => {
+    if (!playAll) return;
+    if (activePhaseIndex < PHASES.length - 1) {
+      setActivePhaseIndex(activePhaseIndex + 1);
+      setActiveStepIndex(0);
+    } else {
+      setPlayAll(false);
+    }
+  };
+
   return (
     <div className="h-screen flex flex-col bg-slate-50 dark:bg-slate-950 overflow-hidden">
       {/* Header */}
       <header className="flex-shrink-0 border-b bg-white dark:bg-slate-900 z-10">
         <div className="px-6 h-14 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Link href="/" className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+            <Link href="/home" className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
               <ArrowLeft className="w-5 h-5 text-slate-600 dark:text-slate-300" />
             </Link>
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white"><BookOpen className="w-5 h-5" /></div>
+              <div className="p-2 rounded-xl bg-primary text-white"><BookOpen className="w-5 h-5" /></div>
               <div>
                 <h1 className="font-semibold text-slate-900 dark:text-slate-100">Modeler Playbook</h1>
                 <div className="flex items-center gap-2">
                   <p className="text-xs text-slate-500">Process BIM Onboarding</p>
-                  <span className="text-[10px] font-medium text-blue-600 bg-blue-50 dark:bg-blue-900/30 px-1.5 py-0.5 rounded">{progressPercent}%</span>
+                  <span className="text-[10px] font-medium text-primary bg-primary/10 px-1.5 py-0.5 rounded">{progressPercent}%</span>
                 </div>
               </div>
             </div>
           </div>
-          <Link href="/resources" className="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1">Resources <ArrowRight className="w-3.5 h-3.5" /></Link>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setPlayAll((v) => !v)}
+              className={cn(
+                "text-sm flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors",
+                playAll
+                  ? "bg-primary text-white"
+                  : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800",
+              )}
+              aria-pressed={playAll}
+            >
+              <Volume2 className="w-4 h-4" /> {playAll ? "Playing all…" : "Play all"}
+            </button>
+            <Link href="/resources" className="text-sm text-primary hover:text-primary/80 flex items-center gap-1">Resources <ArrowRight className="w-3.5 h-3.5" /></Link>
+          </div>
         </div>
       </header>
 
@@ -865,20 +912,20 @@ export default function GuidePage() {
                 const Icon = phase.icon;
                 return (
                   <div key={phase.id}>
-                    <button onClick={() => { setActivePhaseIndex(pi); setActiveStepIndex(0); }} className={cn("w-full flex items-center gap-2.5 p-2 rounded-lg text-left transition-colors", active ? "bg-blue-50 dark:bg-blue-900/20" : "hover:bg-slate-50 dark:hover:bg-slate-800/50")}>
-                      <div className={cn("w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0", active ? "bg-blue-100 text-blue-600" : "bg-slate-100 dark:bg-slate-800 text-slate-400")}>
+                    <button onClick={() => { setActivePhaseIndex(pi); setActiveStepIndex(0); }} className={cn("w-full flex items-center gap-2.5 p-2 rounded-lg text-left transition-colors", active ? "bg-primary/5" : "hover:bg-slate-50 dark:hover:bg-slate-800/50")}>
+                      <div className={cn("w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0", active ? "bg-primary/10 text-primary" : "bg-slate-100 dark:bg-slate-800 text-slate-400")}>
                         {done ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" /> : <Icon className="w-3.5 h-3.5" />}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Phase {phase.number}</div>
-                        <div className={cn("text-xs font-semibold truncate", active ? "text-blue-900 dark:text-blue-100" : "text-slate-600 dark:text-slate-300")}>{phase.title}</div>
+                        <div className={cn("text-xs font-semibold truncate", active ? "text-primary" : "text-slate-600 dark:text-slate-300")}>{phase.title}</div>
                       </div>
                     </button>
                     {active && (
                       <div className="ml-5 pl-3 mt-1 border-l-2 border-slate-100 dark:border-slate-800 space-y-0.5">
                         {phase.steps.map((step, si) => (
-                          <button key={step.id} onClick={() => setActiveStepIndex(si)} className={cn("w-full flex items-center gap-2 px-2 py-1.5 rounded text-left text-[11px] transition-colors", si === activeStepIndex ? "bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700 text-blue-600 font-medium" : "text-slate-500 hover:text-slate-800")}>
-                            {completed.has(step.id) ? <CheckCircle2 className="w-3 h-3 text-emerald-500 flex-shrink-0" /> : <Circle className={cn("w-3 h-3 flex-shrink-0", si === activeStepIndex ? "text-blue-400" : "text-slate-300")} />}
+                          <button key={step.id} onClick={() => setActiveStepIndex(si)} className={cn("w-full flex items-center gap-2 px-2 py-1.5 rounded text-left text-[11px] transition-colors", si === activeStepIndex ? "bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700 text-primary font-medium" : "text-slate-500 hover:text-slate-800")}>
+                            {completed.has(step.id) ? <CheckCircle2 className="w-3 h-3 text-emerald-500 flex-shrink-0" /> : <Circle className={cn("w-3 h-3 flex-shrink-0", si === activeStepIndex ? "text-primary" : "text-slate-300")} />}
                             <span className="truncate">{step.title}</span>
                           </button>
                         ))}
@@ -895,14 +942,22 @@ export default function GuidePage() {
         <div className={cn("flex-1 flex flex-col min-h-0", viewingDocId && !isViewerExpanded ? "hidden lg:block" : "")}>
           <div className="flex-1 overflow-y-auto">
           <div className="max-w-3xl mx-auto px-8 py-12">
-            <Badge variant="outline" className="text-blue-600 border-blue-200 bg-blue-50 mb-6">Phase {activePhase.number} &middot; Step {activeStepIndex + 1} of {activePhase.steps.length}</Badge>
+            <PhaseAudio
+              key={activePhase.id}
+              tracks={PHASE_AUDIO[activePhase.id] ?? []}
+              phaseNumber={activePhase.number}
+              autoPlay={playAll}
+              onAllEnded={handlePhaseAudioEnded}
+            />
+
+            <Badge variant="outline" className="text-primary border-primary/20 bg-primary/5 mb-6">Phase {activePhase.number} &middot; Step {activeStepIndex + 1} of {activePhase.steps.length}</Badge>
 
             <h2 className={cn("text-3xl md:text-4xl font-bold mb-6", isDone ? "text-slate-400" : "text-slate-900 dark:text-slate-100")}>{activeStep.title}</h2>
             <p className={cn("text-lg leading-relaxed mb-8", isDone ? "text-slate-500" : "text-slate-700 dark:text-slate-300")}>{activeStep.action}</p>
 
-            <div className="rounded-2xl p-5 mb-10 bg-blue-50/50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-800/50 flex items-start gap-4">
-              <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center flex-shrink-0"><Lightbulb className="w-5 h-5 text-blue-600" /></div>
-              <div><h4 className="text-xs font-bold text-blue-900 dark:text-blue-100 uppercase tracking-wider mb-1">Why it matters</h4><p className="text-sm text-blue-800 dark:text-blue-200 leading-relaxed">{activeStep.why}</p></div>
+            <div className="rounded-2xl p-5 mb-10 bg-primary/5 border border-primary/10 flex items-start gap-4">
+              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0"><Lightbulb className="w-5 h-5 text-primary" /></div>
+              <div><h4 className="text-xs font-bold text-primary uppercase tracking-wider mb-1">Why it matters</h4><p className="text-sm text-foreground leading-relaxed">{activeStep.why}</p></div>
             </div>
 
             {(activeStep.documentId || activeStep.toolRoute) && (
@@ -913,7 +968,7 @@ export default function GuidePage() {
                   </button>
                 )}
                 {activeStep.toolRoute && (
-                  <Link href={activeStep.toolRoute} className="inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white shadow-sm">
+                  <Link href={activeStep.toolRoute} className="inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-medium bg-primary hover:bg-primary/90 text-white shadow-sm">
                     <Wrench className="w-4 h-4" /> Open {activeStep.toolLabel}
                   </Link>
                 )}
@@ -968,7 +1023,7 @@ export default function GuidePage() {
                             {isChecked ? (
                               <CheckCircle2 className="w-5 h-5 text-emerald-500" />
                             ) : (
-                              <Circle className="w-5 h-5 text-slate-300 group-hover:text-blue-400 transition-colors" />
+                              <Circle className="w-5 h-5 text-slate-300 group-hover:text-primary transition-colors" />
                             )}
                           </button>
                           <button
@@ -986,8 +1041,8 @@ export default function GuidePage() {
                                 isActiveHighlight
                                   ? "bg-yellow-400 text-yellow-900"
                                   : viewingDocId === activeStep.documentId && viewingDocPage === pageRef && !searchRef
-                                  ? "bg-blue-600 text-white"
-                                  : "bg-blue-50 dark:bg-blue-900/30 text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-800/50"
+                                  ? "bg-primary text-white"
+                                  : "bg-primary/10 text-primary hover:bg-primary/20"
                               )}
                             >
                               <FileText className="w-3 h-3" />
@@ -1004,14 +1059,14 @@ export default function GuidePage() {
 
             <div className="pt-6 border-t border-slate-200 dark:border-slate-800 space-y-4">
               <h4 className="text-base font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2"><MessageSquare className="w-4 h-4 text-slate-400" /> My Notes</h4>
-              <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm focus-within:ring-2 focus-within:ring-blue-500 transition-all">
+              <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm focus-within:ring-2 focus-within:ring-primary transition-all">
                 <textarea value={notes[activeStep.id] || ''} onChange={(e) => updateNote(activeStep.id, e.target.value)} placeholder="Add notes, reminders, or questions..." className="w-full min-h-[100px] p-4 bg-transparent resize-y outline-none text-sm text-slate-700 dark:text-slate-300 placeholder:text-slate-400" />
                 <div className="px-4 py-2 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800 flex items-center gap-2">
                   <label className="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-200 transition-colors"><Paperclip className="w-3.5 h-3.5" /> Attach File<input type="file" className="hidden" onChange={(e) => { if (e.target.files?.[0]) addAttachment(activeStep.id, e.target.files[0].name); }} /></label>
                 </div>
               </div>
               {(attachments[activeStep.id] || []).length > 0 && (
-                <div className="flex flex-wrap gap-2">{attachments[activeStep.id].map((f, i) => (<div key={i} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-xs text-slate-600 shadow-sm"><FileText className="w-3 h-3 text-blue-500" /><span className="truncate max-w-[150px]">{f}</span></div>))}</div>
+                <div className="flex flex-wrap gap-2">{attachments[activeStep.id].map((f, i) => (<div key={i} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-xs text-slate-600 shadow-sm"><FileText className="w-3 h-3 text-primary" /><span className="truncate max-w-[150px]">{f}</span></div>))}</div>
               )}
             </div>
           </div>
@@ -1033,7 +1088,7 @@ export default function GuidePage() {
           <div className={cn("border-l bg-slate-100 dark:bg-slate-950 flex flex-col", isViewerExpanded ? "absolute inset-0 z-20" : "w-full lg:w-2/5 lg:relative absolute inset-0 z-20 lg:z-0")}>
             <div className="h-12 px-4 flex items-center justify-between bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex-shrink-0">
               <span className="text-sm font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2 min-w-0">
-                <FileText className="w-4 h-4 text-blue-500 flex-shrink-0" />
+                <FileText className="w-4 h-4 text-primary flex-shrink-0" />
                 Reference Document
                 {viewingSearchText ? (
                   <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-yellow-100 text-yellow-800 truncate max-w-[120px]">

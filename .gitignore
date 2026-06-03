@@ -39,3 +39,6 @@ prisma/migrations/
 
 # large document files (stored separately)
 documents/
+
+# auth — pre-registered user allowlist (contains password hashes)
+auth/users.json

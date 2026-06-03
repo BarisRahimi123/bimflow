@@ -1,0 +1,10 @@
+{
+  "users": [
+    {
+      "email": "admin@plansrow.com",
+      "name": "Example Admin",
+      "salt": "REPLACE_WITH_GENERATED_SALT",
+      "hash": "REPLACE_WITH_GENERATED_HASH"
+    }
+  ]
+}

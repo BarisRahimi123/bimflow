@@ -1,0 +1,45 @@
+Hi, and welcome. In the next few minutes we're going to cover one of the most important habits on this project — naming your files correctly.
+
+This might not sound exciting, but trust me, this is the thing that keeps thousands of drawings, models, and PDFs findable instead of lost. When everyone names files the same way, the whole team can search, sort, and federate models without guessing. When people freestyle it, things break.
+
+So let's make this easy.
+
+We work with two naming systems, depending on which project you're on. One is EAGLE, and the other is PARAGON. They follow the same idea — a string of short codes separated by dashes, where every code tells you something specific about the file. The exact pieces are a little different between projects, but the concept is identical.
+
+Let me give you the big picture for each one.
+
+An EAGLE file name has nine pieces: Campus, Building, Level, UPN, Discipline, Sector, Author, Model Type, and File Extension.
+
+A PARAGON file name also has nine pieces: Building, Discipline, Level, Sub-Level, Sector, System Abbreviation, Model Type, Company Code, and Extension.
+
+Now here's the key point — you don't need to memorize any of this.
+
+Each naming guide is an Excel workbook with a tab called the File Name Generator. You click the orange cells, pick your options from the drop-down menus, and the finished file name appears at the bottom. Copy that, rename your file to match, and you're done. The drop-downs exist so nobody types an invalid code by accident.
+
+That's the workflow. Use the generator. Don't build file names by hand.
+
+Let me highlight a few things you should understand though.
+
+First, the UPN — that's Unique Process Number. On EAGLE, this is a three-digit code that identifies the building system. Chilled water, general exhaust, cleanroom air — each one has a specific number. There's a UPN list in the guide that maps every system to its code. When you're filling in the generator, you look it up there.
+
+On PARAGON, the same concept exists but it's called the System Abbreviation — letters instead of numbers. Things like G-E-N for general, T-C-H-W for tertiary chilled water. Same idea, different format.
+
+The key mindset here: don't invent a UPN or system code. Look it up. If a system isn't on the list, that's a flag to raise with document control, not something to make up.
+
+Second, the Model Type code tells you what kind of file it is. D-M is a Revit design model. D-X is a CADWorx design model. C-M is a construction model. F-M is a federated model. X-M means deleted. Knowing these helps you quickly understand what you're looking at.
+
+Third, the Author or Company Code — three letters that identify who created the file. Your company has a code. Use it. If you're not sure what it is, ask document control.
+
+One important caution about the Excel workbook. It has hidden tabs that feed those drop-downs. Don't edit them casually. If you need to add a new building, level, author, or system, follow the instructions in the guide — there's a specific process to unhide sheets, add data only in the grey areas, and re-protect everything. When in doubt, route changes through document control.
+
+Alright, let's wrap this up.
+
+Whether you're on EAGLE or PARAGON, the principle is the same: a file name is a sentence made of codes, every position has a meaning, and you never improvise.
+
+Use the File Name Generator. Look up codes you don't know. Don't invent new ones — raise the question instead.
+
+Get this right, and your files practically organize themselves. Everyone downstream — coordination, construction, facilities — can find exactly what they need, the first time.
+
+Open up the naming guide for your project now. Find the File Name Generator tab. Practice creating a few file names. It'll take five minutes and you'll have it down.
+
+That's it for this module. Thanks for watching, and welcome to the team.

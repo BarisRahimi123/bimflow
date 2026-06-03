@@ -2,8 +2,12 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { CheckCircle2, GraduationCap } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+// Public pages (landing + login) should not show the in-app workflow nav.
+const HIDDEN_ON = ["/", "/login"];
 
 const PHASES = [
   { id: "setup",      number: 1, label: "Setup",      steps: ["s1","s2","s3","s4"] },
@@ -16,6 +20,7 @@ const PHASES = [
 ];
 
 export default function PhaseProgress() {
+  const pathname = usePathname();
   const [completed, setCompleted] = useState<Set<string>>(new Set());
   const [mounted, setMounted] = useState(false);
 
@@ -28,6 +33,7 @@ export default function PhaseProgress() {
   }, []);
 
   if (!mounted) return null;
+  if (HIDDEN_ON.includes(pathname)) return null;
 
   const totalCompleted = completed.size;
   const totalSteps = PHASES.reduce((sum, p) => sum + p.steps.length, 0);

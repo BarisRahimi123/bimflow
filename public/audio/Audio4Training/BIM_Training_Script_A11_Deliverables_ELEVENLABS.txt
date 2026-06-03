@@ -1,0 +1,121 @@
+Hey there! Welcome to this module on the A-11 Deliverables Format Table.
+
+This document answers a simple but crucial question: Is this deliverable coming to me in 2D or 3D?
+
+Why does this matter? Because it directly affects how you build your construction model.
+
+If something is delivered in 3D, you have a model to reference. You can see the geometry, the routing, the spatial relationships.
+
+But if something is delivered in 2D only, you have drawings and documents - but no 3D model. That means YOU have to interpret those 2D documents and create the 3D geometry yourself.
+
+This is a big deal for planning your work. If you're expecting a 3D model but only get 2D drawings, you'll need more time and effort to complete your scope.
+
+Let's walk through how the A-11 is structured.
+
+The A-11 is organized by discipline and deliverable type. For each deliverable, it tells you the format: either 2D, which typically means PDF, or 3D, which typically means Navisworks NWD format.
+
+Let me give you some examples.
+
+P and IDs - Piping and Instrumentation Diagrams - are delivered in 2D as PDF documents.
+
+This makes sense when you think about it. A P and ID is a schematic. It shows the process flow, the equipment, the instruments, the line numbers. But it's not spatially accurate. It doesn't show you exactly where things are located in the building.
+
+So when you're modeling piping, you'll use the P and ID to understand WHAT needs to be connected, but you'll use other documents to understand WHERE it goes.
+
+Piping plans and sections, on the other hand, are delivered in 3D as Navisworks models.
+
+This gives you the spatial layout. You can see where the pipes are routed, how they connect to equipment, and how they relate to other systems.
+
+But remember - as we discussed in earlier modules - these design models are not at the full level of detail you need for construction. You'll still need to add detail based on specs and submittals.
+
+General Arrangement plans for equipment and devices are delivered in 2D.
+
+These show you equipment locations on a floor plan. You'll use these to understand where major equipment is positioned.
+
+Specifications are delivered as 2D documents - typically PDFs.
+
+Details are also 2D.
+
+Distribution schematics and circuiting diagrams are 2D.
+
+See the pattern? Documents that are schematic or informational in nature tend to be 2D. Documents that need to show spatial relationships tend to be 3D.
+
+Now, here's where the A-11 becomes really valuable for planning.
+
+Before you start modeling a system or area, look at the A-11. Identify all the deliverables that apply to your scope. Note which ones are 2D and which are 3D.
+
+For the 3D deliverables, you'll have geometry to reference.
+
+For the 2D deliverables, you'll need to interpret the information and build the geometry yourself.
+
+This helps you estimate effort more accurately. More 2D-only scope means more modeling work for you.
+
+Let me share another important point. The A-11 also includes a note about dimensions and verification.
+
+For some deliverables, you'll see guidance that says "Dimensions taken from model, contractor verifies based on final equipment."
+
+What does this mean? It means the dimensions shown are based on the design model, but YOU are responsible for verifying them against the actual equipment you're installing.
+
+If you receive a pump that's slightly different from what was assumed in design, you need to model YOUR pump - the real one from your submittal - not just copy the design model.
+
+This ties back to what we discussed in module one. You're creating a Construction Model based on YOUR approved submittals. The design gives you the intent. You provide the constructible detail.
+
+Let's talk about how to use the A-11 in practice.
+
+Step one: Find your discipline section in the A-11.
+
+Step two: List out all the deliverables that apply to your scope.
+
+Step three: Note the format for each - 2D or 3D.
+
+Step four: For 2D deliverables, plan additional time to interpret and model.
+
+Step five: For 3D deliverables, understand that you still need to add detail and verify against submittals.
+
+Here's a quick reference for common deliverables:
+
+P and IDs - 2D
+Piping plans and sections - 3D
+Equipment plans - 2D
+Specifications - 2D
+Details - 2D
+Distribution schematics - 2D
+Circuiting diagrams - 2D
+
+Of course, always check the actual A-11 for your project, as deliverables may vary.
+
+One more thing. The A-11 helps you understand the document hierarchy.
+
+When you're building your construction model, you're pulling information from multiple sources: 3D design models, 2D drawings, specifications, details, P and IDs.
+
+If these sources conflict, you need to know which one takes priority. The order of precedence is typically:
+
+Specifications take priority over everything.
+Then P and IDs.
+Then 2D IFC drawings.
+Then 3D models.
+Then other 2D drawings.
+
+This is documented in the BIM execution requirements. But the A-11 helps you understand what format each source is in, so you know what you're working with.
+
+Alright, let's wrap up with the key takeaways.
+
+Number one: The A-11 tells you whether each deliverable is 2D or 3D format.
+
+Number two: 3D deliverables give you geometry to reference. 2D deliverables require you to interpret and create geometry.
+
+Number three: More 2D scope means more modeling effort. Plan accordingly.
+
+Number four: Even with 3D deliverables, you still need to add detail and verify against your submittals.
+
+Number five: Understand the document hierarchy. Specs beat P and IDs beat drawings beat models.
+
+Number six: Use the A-11 to plan your work before you start modeling.
+
+That's the A-11 Deliverables Format Table.
+
+Combined with the A-7 for LOD requirements and the A-9 for tolerances, you now have a complete picture of what to model, how much deviation is allowed, and what format to expect.
+
+These three documents - A-7, A-9, and A-11 - are your foundation for successful BIM modeling on this project.
+
+Thanks for completing this training series. Now get out there and build some great models!

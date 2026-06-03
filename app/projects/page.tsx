@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { FileText, FolderOpen, Plus, ArrowLeft, Loader2 } from "lucide-react";
+import { FolderOpen, Plus, Loader2 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
+import { SiteHeader } from "@/components/site-header";
+import { SiteFooter } from "@/components/site-footer";
 
 interface Project {
   id: string;
@@ -37,38 +39,30 @@ export default function ProjectsPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50 dark:from-slate-950 dark:via-blue-950/20 dark:to-slate-950">
-      <header className="border-b bg-white/80 backdrop-blur-sm dark:bg-slate-900/80 sticky top-0 z-50">
-        <div className="container mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Link href="/" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
-              <ArrowLeft className="w-4 h-4" />
-            </Link>
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center">
-                <FileText className="w-5 h-5 text-white" />
-              </div>
-              <span className="text-xl font-semibold tracking-tight">Projects</span>
-            </div>
+    <div className="flex min-h-screen flex-col bg-surface">
+      <SiteHeader />
+
+      <main className="container mx-auto px-6 flex-1 py-8">
+        <div className="mb-8 flex items-center justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-semibold tracking-tight text-foreground">Projects</h1>
+            <p className="text-sm text-muted-foreground">Organize and analyze your P&ID drawings</p>
           </div>
-          <Link href="/projects/new" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 text-white font-medium text-sm hover:bg-blue-700 transition-colors">
+          <Link href="/projects/new" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:bg-primary/90 transition-colors">
             <Plus className="w-4 h-4" />
             New Project
           </Link>
         </div>
-      </header>
-
-      <main className="container mx-auto px-6 py-8">
         {loading ? (
           <div className="flex items-center justify-center py-16">
-            <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
           </div>
         ) : error ? (
           <div className="text-center py-16">
             <p className="text-red-500">{error}</p>
             <button 
               onClick={() => window.location.reload()} 
-              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg"
+              className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-lg"
             >
               Retry
             </button>
@@ -78,7 +72,7 @@ export default function ProjectsPage() {
             <FolderOpen className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
             <h2 className="text-xl font-semibold mb-2">No projects yet</h2>
             <p className="text-muted-foreground mb-6">Create your first project to start analyzing P&ID drawings</p>
-            <Link href="/projects/new" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700">
+            <Link href="/projects/new" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-primary/90">
               <Plus className="w-4 h-4" />
               Create First Project
             </Link>
@@ -89,11 +83,11 @@ export default function ProjectsPage() {
               <Link
                 key={project.id}
                 href={`/projects/${project.id}`}
-                className="block p-6 rounded-xl border bg-white dark:bg-slate-900/50 hover:shadow-lg hover:border-blue-300 transition-all group"
+                className="block p-6 rounded-xl border bg-white dark:bg-slate-900/50 hover:shadow-lg hover:border-primary/30 transition-all group"
               >
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center flex-shrink-0 group-hover:bg-blue-200 transition-colors">
-                    <FolderOpen className="w-6 h-6 text-blue-600" />
+                  <div className="w-12 h-12 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center flex-shrink-0 group-hover:bg-primary/20 transition-colors">
+                    <FolderOpen className="w-6 h-6 text-primary" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="font-semibold truncate">{project.name}</h3>
@@ -113,10 +107,10 @@ export default function ProjectsPage() {
             
             <Link
               href="/projects/new"
-              className="block p-6 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-blue-500 transition-colors group"
+              className="block p-6 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-primary transition-colors group"
             >
               <div className="flex flex-col items-center justify-center h-full py-4 text-center">
-                <div className="w-12 h-12 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-3 group-hover:bg-blue-100 group-hover:text-blue-600 transition-colors">
+                <div className="w-12 h-12 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-3 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
                   <Plus className="w-6 h-6" />
                 </div>
                 <p className="font-medium text-muted-foreground group-hover:text-foreground">Create New Project</p>
@@ -125,6 +119,7 @@ export default function ProjectsPage() {
           </div>
         )}
       </main>
+      <SiteFooter />
     </div>
   );
 }

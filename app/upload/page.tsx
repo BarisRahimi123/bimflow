@@ -2,10 +2,8 @@
 
 import { useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import {
   FileUp,
-  ArrowLeft,
   FileText,
   X,
   Check,
@@ -20,6 +18,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { SiteHeader } from "@/components/site-header";
+import { SiteFooter } from "@/components/site-footer";
 
 interface UploadFile {
   file: File;
@@ -227,29 +227,10 @@ export default function UploadPage() {
   const completedFiles = files.filter((f) => f.status === "complete");
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
-      {/* Header */}
-      <header className="sticky top-0 z-50 border-b bg-white/80 backdrop-blur-md">
-        <div className="container mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Link
-              href="/"
-              className="flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-colors"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span className="text-sm font-medium">Home</span>
-            </Link>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center">
-              <FileText className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-lg font-semibold">PIDFlow</span>
-          </div>
-        </div>
-      </header>
+    <div className="flex min-h-screen flex-col bg-surface">
+      <SiteHeader />
 
-      <main className="container mx-auto px-6 py-12 max-w-4xl">
+      <main className="container max-w-4xl flex-1 py-10">
         {/* Title */}
         <div className="text-center mb-10">
           <h1 className="text-3xl font-bold mb-2">Upload P&ID Drawings</h1>
@@ -263,8 +244,8 @@ export default function UploadPage() {
           className={cn(
             "border-2 border-dashed transition-all duration-200 cursor-pointer",
             isDragging
-              ? "border-blue-500 bg-blue-50/50 scale-[1.01]"
-              : "border-slate-200 hover:border-blue-400 hover:bg-blue-50/30"
+              ? "border-primary bg-primary/5 scale-[1.01]"
+              : "border-slate-200 hover:border-primary hover:bg-primary/5"
           )}
           onDrop={handleDrop}
           onDragOver={handleDragOver}
@@ -277,14 +258,14 @@ export default function UploadPage() {
                 className={cn(
                   "w-20 h-20 rounded-2xl mx-auto mb-6 flex items-center justify-center transition-all",
                   isDragging
-                    ? "bg-blue-100 scale-110"
+                    ? "bg-primary/10 scale-110"
                     : "bg-gradient-to-br from-slate-100 to-slate-50"
                 )}
               >
                 <FileUp
                   className={cn(
                     "w-10 h-10 transition-colors",
-                    isDragging ? "text-blue-600" : "text-slate-400"
+                    isDragging ? "text-primary" : "text-slate-400"
                   )}
                 />
               </div>
@@ -320,7 +301,7 @@ export default function UploadPage() {
               type="checkbox"
               checked={autoProcess}
               onChange={(e) => setAutoProcess(e.target.checked)}
-              className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+              className="w-4 h-4 rounded border-slate-300 text-primary focus:ring-primary"
             />
             <span className="text-sm text-slate-600">
               Automatically process with AI after upload
@@ -385,6 +366,8 @@ export default function UploadPage() {
           </CardContent>
         </Card>
       </main>
+
+      <SiteFooter />
     </div>
   );
 }
@@ -404,7 +387,7 @@ function FileItem({
       return <FileText className="w-6 h-6 text-red-500" />;
     }
     if (file.file.type.includes("image")) {
-      return <ImageIcon className="w-6 h-6 text-blue-500" />;
+      return <ImageIcon className="w-6 h-6 text-primary" />;
     }
     return <File className="w-6 h-6 text-slate-400" />;
   };
@@ -413,7 +396,7 @@ function FileItem({
     switch (file.status) {
       case "uploading":
         return (
-          <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100">
+          <Badge className="bg-primary/10 text-primary hover:bg-primary/10">
             <Loader2 className="w-3 h-3 mr-1 animate-spin" />
             Uploading
           </Badge>
@@ -492,7 +475,7 @@ function FileItem({
           <Button
             variant="ghost"
             size="sm"
-            className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+            className="text-primary hover:text-primary hover:bg-primary/5"
           >
             View Results →
           </Button>

@@ -1,0 +1,133 @@
+Welcome back! In this module, we're covering the A-9 Change Management document.
+
+This is one of the most critical documents for BIM coordination, because it answers a question you'll face every single day: How much can my model deviate from the design?
+
+In a perfect world, everything would be modeled exactly as designed. But we don't live in a perfect world. There are clashes to resolve. There are constructability issues. Sometimes you need to move things.
+
+The A-9 tells you how much movement is acceptable - and when you need to go through a formal change process.
+
+Let's start with the basics. The A-9 contains tolerance tables organized by discipline. You'll find tables for Process, Mechanical, Electrical, Structural, and Architectural.
+
+Each table lists different element types and their approved tolerances.
+
+But here's the key insight that many people miss: The tolerance depends not just on WHAT the element is, but also on WHERE it is located.
+
+Let me explain with an example.
+
+Say you have a 4-inch process pipe. What's the tolerance?
+
+Well, it depends. Is the pipe in a subfab lateral rack? Is it in an EOR engineered rack? Or is it an individual pipe run out in the field?
+
+If it's in a subfab lateral rack, the tolerance is ZERO. Zero inches. No deviation allowed. This is a critical area.
+
+If it's in an EOR engineered rack, the tolerance is one-half inch.
+
+If it's an individual pipe run not in a rack, the tolerance is 6 inches.
+
+Same pipe. Same size. But three completely different tolerances based on location.
+
+This is why you need to understand the A-9 deeply. You can't just memorize one number. You need to know how location affects tolerance.
+
+Let me walk you through the key tolerance categories.
+
+For Process discipline, here are the main ones:
+
+Subfab lateral racks - zero tolerance. These are critical. The design must be followed exactly.
+
+Process piping in EOR engineered racks - one-half inch tolerance.
+
+Utility mains and sub-mains - 1 inch tolerance.
+
+Equipment and panel datums - one-half inch tolerance, except subfab which is zero.
+
+Equipment feeders and utility branches to equipment - 6 inch tolerance.
+
+Individual pipe runs including branch fitting locations - 6 inch tolerance.
+
+In-line component location and orientation - 6 inches axially.
+
+EOR designed pipe supports - 6 inch tolerance.
+
+And all remaining components - 2 inch tolerance as a default.
+
+For Mechanical discipline, the pattern is similar:
+
+Subfab lateral rack exhaust laterals - zero tolerance.
+
+Mechanical equipment - zero tolerance, but with a note. The location in the model is for basis of design only. Final location is owned by the contractor.
+
+Ductwork mains and branches - 6 inch tolerance.
+
+Mechanical piping in EOR racks - 1 inch tolerance.
+
+Mechanical piping not in racks - 6 inch tolerance.
+
+Plumbing mains and drains - 6 inch tolerance.
+
+Plumbing branches - 12 inch tolerance. That's a full foot.
+
+Plumbing underground - 2 inch tolerance.
+
+For Electrical discipline:
+
+Raceways in subfab lateral racks - 1 inch tolerance.
+
+Raceways in EOR engineered racks - 2 inch tolerance.
+
+Raceways not in racks - 6 inch tolerance.
+
+Major equipment datums like switchgear and transformers - one-half inch tolerance.
+
+Individual conduits - 6 inch tolerance.
+
+For Structural discipline:
+
+Subfab lateral racks - zero tolerance.
+
+Main building steel and structure - zero tolerance.
+
+Cleanroom ceiling grid - zero tolerance.
+
+EOR designed pipe supports - 6 inch tolerance.
+
+Now, what do these tolerances actually mean for you?
+
+If you need to move something within the approved tolerance, you can do it. You don't need to file a formal change request. Just make sure you document it during coordination.
+
+But if you need to move something beyond the approved tolerance, that's a different story. You need to follow the change management process. You'll need to get approval before making that deviation.
+
+Here's a practical tip. When you're resolving a clash, first check the A-9. Can you resolve it within the tolerance? If yes, great - make the move and document it. If no, you need to escalate.
+
+Another important concept: Some elements have zero tolerance. That means the design model is the final word. You cannot deviate. If there's a clash with a zero-tolerance element, something else has to move - not the zero-tolerance item.
+
+Examples of zero-tolerance items include:
+Subfab lateral racks,
+Main building steel,
+Cleanroom ceiling grid,
+And architectural building shell.
+
+These are your constraints. Everything else has to work around them.
+
+Let's also talk about the phrase "LOD may increase but locations should not deviate."
+
+This appears in the A-9 for some elements. It means you can add more detail to the model - like going from a simple box to a detailed piece of equipment - but the location must stay the same. The centerpoint, the datum, the position - those are fixed.
+
+Alright, let's summarize the key takeaways.
+
+Number one: The A-9 defines how much your model can deviate from the design.
+
+Number two: Tolerance depends on BOTH the element type AND the location. A pipe in a subfab rack has zero tolerance. The same pipe as an individual run has 6 inch tolerance.
+
+Number three: Zero tolerance means no deviation allowed. Period.
+
+Number four: If you can resolve a clash within tolerance, do it and document it. If you can't, escalate through the change process.
+
+Number five: Know your constraints. Zero-tolerance elements don't move. Everything else works around them.
+
+Number six: Always check the A-9 before making changes during coordination.
+
+That's the A-9 Change Management document. Master this, and you'll know exactly how much flexibility you have when resolving issues.
+
+Next up, we'll cover the A-11 Deliverables Format Table, which tells you whether to expect something in 2D or 3D format.
+
+See you in the next module!
