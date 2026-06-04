@@ -10,32 +10,36 @@
 
 const AUDIO_BASE = "/audio/Audio4Training";
 
-/** Narration files present in public/audio/Audio4Training */
+/**
+ * Narration files in public/audio/Audio4Training.
+ * Filenames are ASCII-safe slugs (no spaces/special chars) so Vercel's
+ * production static serving resolves them reliably.
+ */
 const A = {
-  cpep: `${AUDIO_BASE}/00-BIM CPEP and BIM Requirements.mp3`,
-  a11: `${AUDIO_BASE}/02_EOR PEP and Supporting Document -A11-.mp3`,
-  a7: `${AUDIO_BASE}/02_EOR PEP and Supporting Document -A7-LOD Matrix.mp3`,
-  a9: `${AUDIO_BASE}/02_EOR PEP and Supporting Document -A9-change mangegment.mp3`,
-  cmc: `${AUDIO_BASE}/03_Certified Model Content (CMC) Guides.mp3`,
-  fileNaming: `${AUDIO_BASE}/04_File Naming Guides and UPN lists.mp3`,
-  coordinates: `${AUDIO_BASE}/05_RVT DWG Grids and Site Coordinates Guide.mp3`,
-  bim360: `${AUDIO_BASE}/07_BIM 360 Guide.mp3`,
-  nfkGuide: `${AUDIO_BASE}/08-BIM Track Guide -Newforma Konekt Guide.mp3`,
-  nfkWeb: `${AUDIO_BASE}/08-BIM Track Guide - Part 2 -Web Interface & Reporting.mp3`,
-  nfkNaming: `${AUDIO_BASE}/08-BIM Track Guide -Newforma Konekt — Part 3 Naming Your Issues.mp3`,
-  nfkIssues: `${AUDIO_BASE}/08-BIM Track Guide -Newforma Konekt — Part 4 Design Issues & Questions.mp3`,
-  searchSets: `${AUDIO_BASE}/09_Search Sets Guide.mp3`,
-  iff1: `${AUDIO_BASE}/12_IFF Submittal Guide - BIM Workflow — Part 1 Design Delivery.mp3`,
-  iff2: `${AUDIO_BASE}/12_IFF Submittal Guide - BIM Workflow —Part 2 Federated Model Structure.mp3`,
-  iff3: `${AUDIO_BASE}/12_IFF Submittal Guide - BIM Workflow —Part 3 Collaboration & Clash Resolution.mp3`,
-  iff4: `${AUDIO_BASE}/12_IFF Submittal Guide - BIM Workflow —Part 4 IFF Submittal Procedure.mp3`,
-  iffField: `${AUDIO_BASE}/12_IFF Submittal Guide - BIM Workflow —Part 4 Model-to-Field Quality.mp3`,
-  clash1: `${AUDIO_BASE}/13_Clash Reporting Process-Clash Reporting for IFF — Part 1 The Setup.mp3`,
-  clash2: `${AUDIO_BASE}/13_Clash Reporting Process-Clash Reporting for IFF — Part 2  Running the Review.mp3`,
-  clash3: `${AUDIO_BASE}/13_Clash Reporting Process-Clash Reporting for IFF — Part 3  Running the Rereview.mp3`,
-  nfpaDesign: `${AUDIO_BASE}/14_NSFP (Fire Protection Head Code-Part 1 Design.mp3`,
-  nfpaInstall: `${AUDIO_BASE}/14_NSFP (Fire Protection Head Code-Part 1 Installation.mp3`,
-  closeout: `${AUDIO_BASE}/15_Close Out - Part 1 Preparing Your Files.mp3`,
+  cpep: `${AUDIO_BASE}/cpep.mp3`,
+  a11: `${AUDIO_BASE}/a11.mp3`,
+  a7: `${AUDIO_BASE}/a7.mp3`,
+  a9: `${AUDIO_BASE}/a9.mp3`,
+  cmc: `${AUDIO_BASE}/cmc.mp3`,
+  fileNaming: `${AUDIO_BASE}/file-naming.mp3`,
+  coordinates: `${AUDIO_BASE}/coordinates.mp3`,
+  bim360: `${AUDIO_BASE}/bim360.mp3`,
+  nfkGuide: `${AUDIO_BASE}/nfk-guide.mp3`,
+  nfkWeb: `${AUDIO_BASE}/nfk-web.mp3`,
+  nfkNaming: `${AUDIO_BASE}/nfk-naming.mp3`,
+  nfkIssues: `${AUDIO_BASE}/nfk-issues.mp3`,
+  searchSets: `${AUDIO_BASE}/search-sets.mp3`,
+  iff1: `${AUDIO_BASE}/iff1.mp3`,
+  iff2: `${AUDIO_BASE}/iff2.mp3`,
+  iff3: `${AUDIO_BASE}/iff3.mp3`,
+  iff4: `${AUDIO_BASE}/iff4.mp3`,
+  iffField: `${AUDIO_BASE}/iff-field.mp3`,
+  clash1: `${AUDIO_BASE}/clash1.mp3`,
+  clash2: `${AUDIO_BASE}/clash2.mp3`,
+  clash3: `${AUDIO_BASE}/clash3.mp3`,
+  nfpaDesign: `${AUDIO_BASE}/nfpa-design.mp3`,
+  nfpaInstall: `${AUDIO_BASE}/nfpa-install.mp3`,
+  closeout: `${AUDIO_BASE}/closeout.mp3`,
 } as const;
 
 export interface AcademyDoc {
