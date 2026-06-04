@@ -12,15 +12,12 @@ import {
   Download,
   ExternalLink,
   FileText,
-  Pause,
-  Play,
-  SkipBack,
-  SkipForward,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getDocByKey, getDocNeighbors, getFolder } from "@/lib/academy/library";
 import { useReviewed } from "@/components/academy/reviewed-context";
-import { useAcademyAudio, fmtTime } from "@/components/academy/audio-context";
+import { DocNarration } from "@/components/academy/doc-narration";
+import { docTargetKey } from "@/lib/academy/audio-overrides";
 
 const PDFViewer = dynamic(() => import("@/components/PDFViewer"), { ssr: false });
 const SpreadsheetViewer = dynamic(() => import("@/components/academy/SpreadsheetViewer"), {
@@ -78,6 +75,12 @@ export default function DocPage({ params }: { params: { docKey: string } }) {
             {reviewed ? <CheckCircle2 className="h-3.5 w-3.5" /> : <Circle className="h-3.5 w-3.5" />}
             {reviewed ? "Reviewed" : "Mark reviewed"}
           </button>
+          <DocNarration
+            targetKey={docTargetKey(key)}
+            title={doc.title}
+            docKey={key}
+            defaultSrc={doc.audioSrc}
+          />
           <a
             href={`/api/documents/${docId}?download=true`}
             className="inline-flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1.5 text-xs font-medium text-muted-foreground hover:bg-accent"
@@ -86,9 +89,6 @@ export default function DocPage({ params }: { params: { docKey: string } }) {
           </a>
         </div>
       </div>
-
-      {/* Narration */}
-      {doc.audioSrc && <DocPlayer src={doc.audioSrc} title={doc.title} docKey={key} />}
 
       {/* Body */}
       <div className="min-h-0 flex-1">
@@ -155,71 +155,6 @@ export default function DocPage({ params }: { params: { docKey: string } }) {
         ) : (
           <span />
         )}
-      </div>
-    </div>
-  );
-}
-
-function DocPlayer({ src, title, docKey }: { src: string; title: string; docKey: string }) {
-  const { track, playing, time, duration, play, toggle, skip, seek, rate, setRate } =
-    useAcademyAudio();
-  const isCurrent = track?.src === src;
-  const t = isCurrent ? time : 0;
-  const d = isCurrent ? duration : 0;
-  const pct = d > 0 ? (t / d) * 100 : 0;
-
-  return (
-    <div className="border-b border-border bg-accent/30 px-6 py-3">
-      <div className="flex items-center gap-3">
-        <button
-          onClick={() => (isCurrent ? toggle() : play({ src, title, docKey }))}
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand text-brand-foreground hover:bg-brand/90"
-          title={isCurrent && playing ? "Pause" : "Play narration"}
-        >
-          {isCurrent && playing ? <Pause className="h-4 w-4" /> : <Play className="ml-0.5 h-4 w-4" />}
-        </button>
-
-        <button
-          onClick={() => isCurrent && skip(-15)}
-          disabled={!isCurrent}
-          className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:bg-accent disabled:opacity-40"
-          title="Back 15s"
-        >
-          <SkipBack className="h-4 w-4" />
-        </button>
-        <button
-          onClick={() => isCurrent && skip(15)}
-          disabled={!isCurrent}
-          className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:bg-accent disabled:opacity-40"
-          title="Forward 15s"
-        >
-          <SkipForward className="h-4 w-4" />
-        </button>
-
-        <div className="min-w-0 flex-1">
-          <div
-            className="group relative h-1.5 w-full cursor-pointer rounded-full bg-border"
-            onClick={(e) => {
-              if (!isCurrent || !d) return;
-              const rect = e.currentTarget.getBoundingClientRect();
-              seek(((e.clientX - rect.left) / rect.width) * d);
-            }}
-          >
-            <div className="h-full rounded-full bg-brand" style={{ width: `${pct}%` }} />
-          </div>
-          <div className="mt-1 flex justify-between text-[11px] tabular-nums text-muted-foreground">
-            <span>Narration · {fmtTime(t)}</span>
-            <span>{fmtTime(d)}</span>
-          </div>
-        </div>
-
-        <button
-          onClick={() => setRate(rate >= 2 ? 0.75 : rate === 1 ? 1.5 : rate === 1.5 ? 2 : 1)}
-          className="shrink-0 rounded-md border border-border px-2 py-1 text-xs font-medium tabular-nums text-muted-foreground hover:bg-accent"
-          title="Playback speed"
-        >
-          {rate}×
-        </button>
       </div>
     </div>
   );

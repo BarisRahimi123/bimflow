@@ -8,8 +8,8 @@ import {
   ZoomOut,
   Loader2,
   AlertCircle,
-  PanelLeft,
-  PanelLeftClose,
+  PanelRight,
+  PanelRightClose,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -222,9 +222,9 @@ export default function PDFViewer({
             aria-pressed={showThumbs}
           >
             {showThumbs ? (
-              <PanelLeftClose className="w-3.5 h-3.5" />
+              <PanelRightClose className="w-3.5 h-3.5" />
             ) : (
-              <PanelLeft className="w-3.5 h-3.5" />
+              <PanelRight className="w-3.5 h-3.5" />
             )}
           </button>
           <button
@@ -271,25 +271,8 @@ export default function PDFViewer({
         </div>
       </div>
 
-      {/* Body: thumbnail rail + continuous page scroll */}
+      {/* Body: continuous page scroll + thumbnail rail (right) */}
       <div className="flex-1 min-h-0 flex">
-        {showThumbs && !loading && !error && totalPages > 0 && (
-          <aside className="flex-shrink-0 w-[148px] overflow-y-auto bg-slate-900 border-r border-slate-700 py-2">
-            {pages.map((n) => (
-              <PdfThumbnail
-                key={n}
-                pdf={pdfDocRef.current}
-                pdfjs={pdfjsRef.current}
-                docVersion={docVersion}
-                pageNumber={n}
-                active={n === currentPage}
-                scrollRef={scrollRef}
-                onClick={() => scrollToPage(n)}
-              />
-            ))}
-          </aside>
-        )}
-
         <div
           ref={scrollRef}
           onScroll={onScroll}
@@ -328,6 +311,23 @@ export default function PDFViewer({
             </div>
           )}
         </div>
+
+        {showThumbs && !loading && !error && totalPages > 0 && (
+          <aside className="flex-shrink-0 w-[148px] overflow-y-auto bg-slate-900 border-l border-slate-700 py-2">
+            {pages.map((n) => (
+              <PdfThumbnail
+                key={n}
+                pdf={pdfDocRef.current}
+                pdfjs={pdfjsRef.current}
+                docVersion={docVersion}
+                pageNumber={n}
+                active={n === currentPage}
+                scrollRef={scrollRef}
+                onClick={() => scrollToPage(n)}
+              />
+            ))}
+          </aside>
+        )}
       </div>
     </div>
   );

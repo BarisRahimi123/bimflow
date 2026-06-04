@@ -20,12 +20,18 @@ import {
 } from "@/lib/academy/library";
 import { useReviewed } from "@/components/academy/reviewed-context";
 import { useAcademyAudio } from "@/components/academy/audio-context";
+import { useAudioOverrides } from "@/components/academy/audio-overrides-context";
+import { docTargetKey, folderTargetKey } from "@/lib/academy/audio-overrides";
 
 export default function FolderPage({ params }: { params: { folderId: string } }) {
   const folder = getFolder(params.folderId);
   if (!folder) notFound();
 
   const { play } = useAcademyAudio();
+  const { resolve } = useAudioOverrides();
+  const overviewSrc = folder
+    ? resolve(folderTargetKey(folder.id), folder.audioSrc)
+    : undefined;
 
   return (
     <div className="px-6 py-8 lg:px-10">
@@ -47,10 +53,10 @@ export default function FolderPage({ params }: { params: { folderId: string } })
             </h1>
             <p className="mt-2 max-w-2xl text-sm text-muted-foreground">{folder.summary}</p>
           </div>
-          {folder.audioSrc && (
+          {overviewSrc && (
             <button
               onClick={() =>
-                play({ src: folder.audioSrc!, title: folder.title, subtitle: "Folder overview" })
+                play({ src: overviewSrc, title: folder.title, subtitle: "Folder overview" })
               }
               className="flex shrink-0 items-center gap-2 rounded-lg bg-brand px-3 py-2 text-sm font-semibold text-brand-foreground transition-colors hover:bg-brand/90"
             >
@@ -90,6 +96,7 @@ function Subfolder({ folder }: { folder: AcademyFolder }) {
 function DocList({ docs, folderId }: { docs: AcademyDoc[]; folderId: string }) {
   const { isReviewed, toggle } = useReviewed();
   const { play, track, playing } = useAcademyAudio();
+  const { resolve } = useAudioOverrides();
   const flat = flattenDocs();
 
   return (
@@ -97,10 +104,11 @@ function DocList({ docs, folderId }: { docs: AcademyDoc[]; folderId: string }) {
       {docs.map((d, i) => {
         const key = `${folderId}:${d.id}:${i}`;
         const reviewed = isReviewed(key);
-        const isCurrent = track?.src === d.audioSrc && d.audioSrc;
         // resolve the canonical flat key (handles duplicate ids)
         const flatKey =
           flat.find((f) => f.folderId === folderId && f.id === d.id)?.key ?? key;
+        const audioSrc = resolve(docTargetKey(flatKey), d.audioSrc);
+        const isCurrent = !!audioSrc && track?.src === audioSrc;
         return (
           <div key={key} className="flex items-center gap-3 px-4 py-3 hover:bg-accent/40">
             <button
@@ -128,9 +136,9 @@ function DocList({ docs, folderId }: { docs: AcademyDoc[]; folderId: string }) {
               </span>
             </Link>
 
-            {d.audioSrc && (
+            {audioSrc && (
               <button
-                onClick={() => play({ src: d.audioSrc!, title: d.title, docKey: flatKey })}
+                onClick={() => play({ src: audioSrc, title: d.title, docKey: flatKey })}
                 className={cn(
                   "flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-colors",
                   isCurrent && playing

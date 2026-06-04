@@ -8,6 +8,9 @@ import {
 // Bucket that holds the BIM reference documents (private).
 export const DOCUMENTS_BUCKET = "documents";
 
+// Bucket that holds admin-uploaded narration audio overrides (private).
+export const AUDIO_BUCKET = "academy-audio";
+
 let adminClient: SupabaseClient | null = null;
 
 // Lazily constructs a service-role Supabase client. Service-role bypasses RLS,
@@ -35,4 +38,35 @@ export async function downloadDocumentObject(
   if (error || !data) return null;
   const arrayBuffer = await data.arrayBuffer();
   return Buffer.from(arrayBuffer);
+}
+
+// Uploads (or replaces) a narration audio object in the private audio bucket.
+export async function uploadAudioObject(
+  objectPath: string,
+  bytes: ArrayBuffer | Uint8Array,
+  contentType: string
+): Promise<{ error: string | null }> {
+  const { error } = await getSupabaseAdmin()
+    .storage.from(AUDIO_BUCKET)
+    .upload(objectPath, bytes, { contentType, upsert: true });
+  return { error: error ? error.message : null };
+}
+
+// Removes a narration audio object from the private audio bucket.
+export async function deleteAudioObject(objectPath: string): Promise<void> {
+  await getSupabaseAdmin().storage.from(AUDIO_BUCKET).remove([objectPath]);
+}
+
+// Creates a short-lived signed URL for a narration audio object. Returns null
+// when the key isn't configured or the object can't be signed.
+export async function createAudioSignedUrl(
+  objectPath: string,
+  expiresIn = 3600
+): Promise<string | null> {
+  if (!hasSupabaseServiceRole()) return null;
+  const { data, error } = await getSupabaseAdmin()
+    .storage.from(AUDIO_BUCKET)
+    .createSignedUrl(objectPath, expiresIn);
+  if (error || !data) return null;
+  return data.signedUrl;
 }

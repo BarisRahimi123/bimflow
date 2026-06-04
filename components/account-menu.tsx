@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { LogOut, User } from "lucide-react";
+import { LogOut, Settings, User } from "lucide-react";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
+import { isAdminEmail } from "@/lib/academy/admin";
 
 interface SessionUser {
   email: string;
@@ -81,6 +83,15 @@ export function AccountMenu() {
           <div className="truncate text-sm font-semibold text-popover-foreground">{user.name}</div>
           <div className="truncate text-xs text-muted-foreground">{user.email}</div>
         </div>
+        {isAdminEmail(user.email) && (
+          <Link
+            href="/academy/settings"
+            className="mt-1 flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-sm font-medium text-popover-foreground transition-colors hover:bg-accent"
+          >
+            <Settings className="h-4 w-4 shrink-0 text-muted-foreground" />
+            Settings
+          </Link>
+        )}
         <button
           onClick={handleLogout}
           disabled={loggingOut}

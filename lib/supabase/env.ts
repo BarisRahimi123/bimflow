@@ -43,3 +43,13 @@ export function getSupabaseServiceRoleKey(): string {
 export function hasSupabaseServiceRole(): boolean {
   return Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY?.trim());
 }
+
+// Comma-separated allowlist of admin emails (lowercased, trimmed). Used to gate
+// the academy Settings page and audio-override write endpoints. Safe to expose
+// (NEXT_PUBLIC_) since real enforcement is the server session check.
+export function getAcademyAdminEmails(): string[] {
+  return (process.env.NEXT_PUBLIC_ACADEMY_ADMIN_EMAILS ?? "")
+    .split(",")
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean);
+}
