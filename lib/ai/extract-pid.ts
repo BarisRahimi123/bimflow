@@ -3,9 +3,15 @@
 
 import Anthropic from "@anthropic-ai/sdk";
 
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-});
+// Lazily construct the Anthropic client. `new Anthropic()` throws when
+// ANTHROPIC_API_KEY is unset, which would crash `next build` page-data
+// collection on CI. Defer construction until an extraction actually runs.
+let anthropicClient: Anthropic | null = null;
+function getAnthropic(): Anthropic {
+  if (anthropicClient) return anthropicClient;
+  anthropicClient = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+  return anthropicClient;
+}
 
 // Types for extracted data
 export interface ExtractedLine {
@@ -191,7 +197,7 @@ export async function extractPidData(
     console.log(`Calling Claude API with ${isPdf ? 'PDF document' : 'image'} from URL: ${fileUrl}`);
 
     // Call Claude API
-    const response = await anthropic.messages.create({
+    const response = await getAnthropic().messages.create({
       model: "claude-sonnet-4-20250514",
       max_tokens: 8192,
       messages: [
@@ -308,7 +314,7 @@ export async function extractFromPdf(
   // In production, you might want to convert to images for better results
   
   try {
-    const response = await anthropic.messages.create({
+    const response = await getAnthropic().messages.create({
       model: "claude-sonnet-4-20250514",
       max_tokens: 8192,
       messages: [

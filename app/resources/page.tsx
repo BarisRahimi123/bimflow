@@ -459,7 +459,7 @@ export default function ResourcesPage() {
             </div>
             <span className="text-sm font-bold text-white">BIM Resources</span>
             <span className="text-white/20 hidden sm:block">·</span>
-            <span className="text-xs text-white/35 hidden sm:block">Project Confluence</span>
+            <span className="text-xs text-white/35 hidden sm:block">Plansrow</span>
           </div>
 
           {/* Search */}

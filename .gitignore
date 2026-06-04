@@ -42,3 +42,4 @@ documents/
 
 # auth — pre-registered user allowlist (contains password hashes)
 auth/users.json
+.gstack/

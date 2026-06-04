@@ -67,7 +67,7 @@ export function LoginForm() {
       )}
 
       <div className="space-y-1.5">
-        <label htmlFor="email" className="text-sm font-medium text-foreground">
+        <label htmlFor="email" className="text-sm font-medium text-primary-foreground">
           Email
         </label>
         <div className="relative">
@@ -80,14 +80,14 @@ export function LoginForm() {
             placeholder="you@company.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="pl-9"
+            className="pl-9 text-slate-900"
             disabled={submitting}
           />
         </div>
       </div>
 
       <div className="space-y-1.5">
-        <label htmlFor="password" className="text-sm font-medium text-foreground">
+        <label htmlFor="password" className="text-sm font-medium text-primary-foreground">
           Password
         </label>
         <div className="relative">
@@ -100,7 +100,7 @@ export function LoginForm() {
             placeholder="••••••••"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="pl-9"
+            className="pl-9 text-slate-900"
             disabled={submitting}
           />
         </div>

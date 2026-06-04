@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { FileText, ShieldCheck, ArrowLeft } from "lucide-react";
 import { LoginForm } from "./login-form";
 
@@ -11,71 +12,66 @@ export const metadata = {
 export default function LoginPage() {
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
-      {/* Left — brand panel */}
-      <div className="relative hidden flex-col justify-between overflow-hidden bg-primary p-12 text-primary-foreground lg:flex">
-        <div className="pointer-events-none absolute inset-0">
-          <div className="absolute -left-20 top-10 h-80 w-80 rounded-full bg-brand/20 blur-3xl" />
-          <div className="absolute -bottom-24 right-0 h-72 w-72 rounded-full bg-brand/10 blur-3xl" />
-        </div>
-
-        <Link href="/" className="relative flex items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand">
-            <FileText className="h-5 w-5 text-brand-foreground" />
-          </div>
-          <span className="text-xl font-bold tracking-tight">PIDFlow</span>
-        </Link>
-
-        <div className="relative max-w-md">
-          <h2 className="text-pretty text-3xl font-bold leading-tight">
-            From P&ID drawing to Revit-ready piping.
-          </h2>
-          <p className="mt-4 text-primary-foreground/70">
-            AI extraction, spec-grounded support calculations, and a guided modeler playbook —
-            all in one workspace.
-          </p>
-        </div>
-
-        <div className="relative flex items-center gap-2 text-sm text-primary-foreground/60">
-          <ShieldCheck className="h-4 w-4" />
-          Invite-only access · Built by VoltShift
-        </div>
+      {/* Left — full-bleed product render */}
+      <div className="relative hidden overflow-hidden bg-primary lg:block">
+        <Image
+          src="/loginpage.jpeg"
+          alt="PIDFlow 3D piping model with live spec-compliance checks"
+          fill
+          priority
+          sizes="(min-width: 1024px) 50vw, 0px"
+          className="object-cover"
+        />
+        {/* feather the seam into the dark sign-in side */}
+        <div className="pointer-events-none absolute inset-y-0 right-0 w-32 bg-gradient-to-r from-transparent to-primary/30" />
       </div>
 
-      {/* Right — form */}
-      <div className="flex flex-col bg-background">
-        <div className="flex items-center justify-between p-6 lg:hidden">
+      {/* Right — dark, glowy sign-in */}
+      <div className="relative flex flex-col overflow-hidden bg-primary text-primary-foreground">
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute -right-20 top-0 h-80 w-80 rounded-full bg-brand/25 blur-3xl" />
+          <div className="absolute -bottom-24 -left-10 h-72 w-72 rounded-full bg-brand/10 blur-3xl" />
+        </div>
+
+        <div className="relative flex items-center justify-between px-6 py-6 sm:px-12">
           <Link href="/" className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-              <FileText className="h-4 w-4 text-brand" />
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand">
+              <FileText className="h-5 w-5 text-brand-foreground" />
             </div>
-            <span className="text-lg font-bold tracking-tight text-foreground">PIDFlow</span>
+            <span className="text-xl font-bold tracking-tight">PIDFlow</span>
+          </Link>
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-primary-foreground/60 transition-colors hover:text-primary-foreground"
+          >
+            <ArrowLeft className="h-4 w-4" /> Back to home
           </Link>
         </div>
 
-        <div className="flex flex-1 items-center justify-center px-6 pb-12 pt-2 sm:px-12">
+        <div className="relative flex flex-1 items-center justify-center px-6 pb-12 pt-2 sm:px-12">
           <div className="w-full max-w-sm">
-            <Link
-              href="/"
-              className="mb-8 inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-            >
-              <ArrowLeft className="h-4 w-4" /> Back to home
-            </Link>
-
             <div className="mb-8">
-              <h1 className="text-2xl font-bold tracking-tight text-foreground">Sign in</h1>
-              <p className="mt-1.5 text-sm text-muted-foreground">
+              <h1 className="text-2xl font-bold tracking-tight">Sign in</h1>
+              <p className="mt-1.5 text-sm text-primary-foreground/70">
                 Welcome back. Enter your credentials to access your workspace.
               </p>
             </div>
 
-            <Suspense fallback={<div className="h-64 animate-pulse rounded-xl bg-secondary" />}>
+            <Suspense fallback={<div className="h-64 animate-pulse rounded-xl bg-white/5" />}>
               <LoginForm />
             </Suspense>
 
-            <p className="mt-8 rounded-xl border border-border bg-card px-4 py-3 text-center text-xs leading-relaxed text-muted-foreground">
+            <p className="mt-8 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-center text-xs leading-relaxed text-primary-foreground/70">
               PIDFlow is invite-only. Need an account?{" "}
-              <span className="font-medium text-foreground">Contact your PlansRow administrator</span>{" "}
+              <span className="font-medium text-primary-foreground">
+                Contact your Plansrow administrator
+              </span>{" "}
               to get access provisioned.
+            </p>
+
+            <p className="mt-6 flex items-center justify-center gap-1.5 text-xs text-primary-foreground/50">
+              <ShieldCheck className="h-3.5 w-3.5" />
+              Invite-only access · Plansrow
             </p>
           </div>
         </div>

@@ -1,24 +1,35 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 
-// Debug: Log configuration on server startup
-if (typeof window === 'undefined') {
-  console.log('Supabase Config:', {
-    url: supabaseUrl ? `${supabaseUrl.substring(0, 30)}...` : 'NOT SET',
-    keySet: supabaseKey ? 'YES' : 'NO',
-  });
+let client: SupabaseClient | null = null;
+
+// Construct the client lazily, only on first use. Building the client at module
+// load throws "supabaseKey is required" whenever the env vars are absent — which
+// is exactly what happens during `next build` page-data collection on CI. A lazy
+// getter keeps the import side-effect-free so the build succeeds, and surfaces a
+// clear error at request time if the keys really are missing in the deployment.
+function getClient(): SupabaseClient {
+  if (client) return client;
+  if (!supabaseUrl || !supabaseKey) {
+    throw new Error(
+      'Supabase env vars missing. Set NEXT_PUBLIC_SUPABASE_URL and ' +
+        'NEXT_PUBLIC_SUPABASE_ANON_KEY in your environment (e.g. Vercel project settings).',
+    );
+  }
+  client = createClient(supabaseUrl, supabaseKey);
+  return client;
 }
 
-if (!supabaseUrl || !supabaseKey) {
-  console.error('❌ SUPABASE CONFIGURATION MISSING!');
-  console.error('Please add to .env.local:');
-  console.error('NEXT_PUBLIC_SUPABASE_URL=https://pouzlstzxpggjpgutmvd.supabase.co');
-  console.error('NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...');
-}
-
-export const supabase = createClient(supabaseUrl, supabaseKey);
+// A proxy so existing `supabase.from(...)` call sites keep working unchanged
+// while deferring construction until a property is actually accessed.
+export const supabase = new Proxy({} as SupabaseClient, {
+  get(_target, prop, receiver) {
+    const value = Reflect.get(getClient() as object, prop, receiver);
+    return typeof value === 'function' ? value.bind(getClient()) : value;
+  },
+});
 
 // Type definitions for PIDFlow tables
 export interface PidflowProject {

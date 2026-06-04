@@ -5,13 +5,13 @@ import {
   FileUp,
   Calculator,
   LayoutGrid,
-  BookOpen,
   ShieldCheck,
   Workflow,
   ScanLine,
   CheckCircle2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ScrollVideoBackground } from "@/components/landing/scroll-video-background";
 
 export const metadata = {
   title: "PIDFlow — From P&ID to Revit-ready piping",
@@ -50,7 +50,10 @@ const STEPS = [
 
 export default function LandingPage() {
   return (
-    <div className="flex min-h-screen flex-col bg-background">
+    <div className="relative flex min-h-screen flex-col">
+      {/* Scroll-scrubbed piping footage behind the entire page */}
+      <ScrollVideoBackground />
+
       {/* Marketing header */}
       <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-md">
         <div className="container flex h-14 items-center justify-between gap-4">
@@ -76,56 +79,55 @@ export default function LandingPage() {
       </header>
 
       <main className="flex-1">
-        {/* Hero */}
+        {/* Hero — copy + CTAs sit over the piping background (no solid fill so
+            the footage reads through; the video's burned-in intro text is
+            skipped, so this HTML is the only copy on screen) */}
         <section className="relative overflow-hidden">
-          {/* Soft background wash */}
-          <div className="pointer-events-none absolute inset-0 -z-10">
-            <div className="absolute -top-32 left-1/2 h-[32rem] w-[32rem] -translate-x-1/2 rounded-full bg-brand/10 blur-3xl" />
-            <div className="absolute -bottom-40 -right-24 h-[28rem] w-[28rem] rounded-full bg-primary/5 blur-3xl" />
-          </div>
+          <div className="container py-20 sm:py-28">
+            <div className="max-w-2xl text-left">
+              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-card/80 px-3.5 py-1.5 text-xs font-medium text-muted-foreground shadow-sm backdrop-blur-sm">
+                <span className="flex h-1.5 w-1.5 rounded-full bg-brand" />
+                Plansrow
+              </div>
 
-          <div className="container max-w-5xl py-20 text-center sm:py-28">
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-card px-3.5 py-1.5 text-xs font-medium text-muted-foreground shadow-sm">
-              <span className="flex h-1.5 w-1.5 rounded-full bg-brand" />
-              Built by VoltShift · Project Confluence
+              <h1 className="text-balance text-4xl font-bold leading-[1.1] tracking-tight text-foreground sm:text-6xl">
+                From P&ID drawing to{" "}
+                <span className="text-brand">Revit-ready piping</span>
+              </h1>
+
+              <p className="mt-6 max-w-xl text-pretty text-lg leading-relaxed text-muted-foreground">
+                PIDFlow turns piping diagrams into verified, spec-compliant models. AI extraction,
+                support calculations, and a guided modeler playbook — all in one workspace.
+              </p>
+
+              <div className="mt-9 flex flex-col items-start gap-3 sm:flex-row sm:items-center">
+                <Link href="/login">
+                  <Button size="lg" className="gap-2 bg-brand font-semibold text-brand-foreground hover:bg-brand/90">
+                    Sign in to your workspace <ArrowRight className="h-4 w-4" />
+                  </Button>
+                </Link>
+                <Link href="/login">
+                  <Button size="lg" variant="outline" className="gap-2 bg-card/70 backdrop-blur-sm">
+                    Request access
+                  </Button>
+                </Link>
+              </div>
+
+              <p className="mt-5 flex items-center gap-1.5 text-xs text-muted-foreground">
+                <ShieldCheck className="h-3.5 w-3.5" />
+                Invite-only · access is limited to pre-registered team members
+              </p>
             </div>
-
-            <h1 className="mx-auto max-w-3xl text-balance text-4xl font-bold leading-[1.1] tracking-tight text-foreground sm:text-6xl">
-              From P&ID drawing to{" "}
-              <span className="text-brand">Revit-ready piping</span>
-            </h1>
-
-            <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg leading-relaxed text-muted-foreground">
-              PIDFlow turns piping diagrams into verified, spec-compliant models. AI extraction,
-              support calculations, and a guided modeler playbook — all in one workspace.
-            </p>
-
-            <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
-              <Link href="/login">
-                <Button size="lg" className="gap-2 bg-brand font-semibold text-brand-foreground hover:bg-brand/90">
-                  Sign in to your workspace <ArrowRight className="h-4 w-4" />
-                </Button>
-              </Link>
-              <Link href="/login">
-                <Button size="lg" variant="outline" className="gap-2">
-                  Request access
-                </Button>
-              </Link>
-            </div>
-
-            <p className="mt-5 flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
-              <ShieldCheck className="h-3.5 w-3.5" />
-              Invite-only · access is limited to pre-registered team members
-            </p>
           </div>
         </section>
 
-        {/* Features */}
-        <section className="border-t border-border bg-surface">
+        {/* Features — dark, semi-transparent panel so the piping footage shows
+            through behind the content */}
+        <section className="border-t border-white/10 bg-primary/70 text-primary-foreground backdrop-blur-md">
           <div className="container max-w-6xl py-20">
             <div className="mx-auto mb-14 max-w-2xl text-center">
-              <div className="eyebrow mb-3">What's inside</div>
-              <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+              <div className="eyebrow mb-3 text-brand">What's inside</div>
+              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
                 Everything between the drawing and the model
               </h2>
             </div>
@@ -134,13 +136,13 @@ export default function LandingPage() {
               {FEATURES.map((f) => (
                 <div
                   key={f.title}
-                  className="group rounded-2xl border border-border bg-card p-6 shadow-sm transition-all hover:shadow-md"
+                  className="group rounded-2xl border border-white/10 bg-white/5 p-6 transition-colors hover:bg-white/10"
                 >
-                  <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-brand/10 text-brand transition-colors group-hover:bg-brand group-hover:text-brand-foreground">
+                  <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-brand/15 text-brand transition-colors group-hover:bg-brand group-hover:text-brand-foreground">
                     <f.icon className="h-5 w-5" />
                   </div>
-                  <h3 className="mb-1.5 text-lg font-bold text-foreground">{f.title}</h3>
-                  <p className="text-sm leading-relaxed text-muted-foreground">{f.body}</p>
+                  <h3 className="mb-1.5 text-lg font-bold">{f.title}</h3>
+                  <p className="text-sm leading-relaxed text-primary-foreground/70">{f.body}</p>
                 </div>
               ))}
             </div>
@@ -148,7 +150,7 @@ export default function LandingPage() {
         </section>
 
         {/* How it works */}
-        <section className="border-t border-border">
+        <section className="border-t border-border bg-background/30 backdrop-blur-sm">
           <div className="container max-w-5xl py-20">
             <div className="mx-auto mb-14 max-w-2xl text-center">
               <div className="eyebrow mb-3">How it works</div>
@@ -172,7 +174,7 @@ export default function LandingPage() {
         </section>
 
         {/* CTA band */}
-        <section className="border-t border-border bg-surface">
+        <section className="border-t border-border bg-surface/80 backdrop-blur-md">
           <div className="container max-w-5xl py-20">
             <div className="relative overflow-hidden rounded-3xl bg-primary px-8 py-14 text-center text-primary-foreground sm:px-16">
               <div className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-brand/20 blur-2xl" />
@@ -182,7 +184,7 @@ export default function LandingPage() {
                 </h2>
                 <p className="mx-auto mt-4 max-w-xl text-pretty text-primary-foreground/70">
                   PIDFlow is currently invite-only. Sign in with your team credentials, or reach out
-                  to PlansRow to get your account provisioned.
+                  to Plansrow to get your account provisioned.
                 </p>
                 <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
                   <Link href="/login">
@@ -206,7 +208,7 @@ export default function LandingPage() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-border bg-background">
+      <footer className="border-t border-border bg-background/80 backdrop-blur-md">
         <div className="container flex h-16 items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary">
@@ -218,7 +220,7 @@ export default function LandingPage() {
             <Link href="/login" className="text-xs font-medium text-muted-foreground transition-colors hover:text-foreground">
               Sign in
             </Link>
-            <p className="text-xs text-muted-foreground">Built by VoltShift · Project Confluence</p>
+            <p className="text-xs text-muted-foreground">Plansrow</p>
           </div>
         </div>
       </footer>

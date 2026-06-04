@@ -10,7 +10,7 @@ export function SiteFooter() {
           </div>
           <span className="text-sm font-semibold text-foreground">PIDFlow</span>
         </div>
-        <p className="text-xs text-muted-foreground">Built by VoltShift · Project Confluence</p>
+        <p className="text-xs text-muted-foreground">Plansrow</p>
       </div>
     </footer>
   );
