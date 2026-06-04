@@ -1,7 +1,11 @@
 // User allowlist storage — Node.js runtime only.
 //
-// Pre-registered users live in `auth/users.json` (gitignored). There is no
-// public sign-up: users are added out-of-band via `scripts/manage-users.mjs`.
+// There is no public sign-up: users are pre-registered out-of-band via
+// `scripts/manage-users.mjs`. The allowlist is loaded from one of two sources:
+//
+//   1. AUTH_USERS env var (preferred — works on Vercel's read-only filesystem).
+//      Holds JSON: either a bare array of users, or `{ "users": [...] }`.
+//   2. `auth/users.json` (local dev fallback; gitignored).
 
 import { readFile } from "fs/promises";
 import path from "path";
@@ -19,7 +23,22 @@ interface UsersFile {
 
 const USERS_PATH = path.join(process.cwd(), "auth", "users.json");
 
+function parseUsers(raw: string): StoredUser[] {
+  try {
+    const parsed = JSON.parse(raw) as StoredUser[] | UsersFile;
+    const users = Array.isArray(parsed) ? parsed : parsed?.users;
+    return Array.isArray(users) ? users : [];
+  } catch {
+    return [];
+  }
+}
+
 export async function loadUsers(): Promise<StoredUser[]> {
+  // 1. Env var takes precedence (production / Vercel).
+  const fromEnv = process.env.AUTH_USERS?.trim();
+  if (fromEnv) return parseUsers(fromEnv);
+
+  // 2. Fall back to the local file (dev).
   let raw: string;
   try {
     raw = await readFile(USERS_PATH, "utf8");
@@ -28,13 +47,7 @@ export async function loadUsers(): Promise<StoredUser[]> {
     if ((error as NodeJS.ErrnoException)?.code === "ENOENT") return [];
     throw error;
   }
-  try {
-    const parsed = JSON.parse(raw) as UsersFile;
-    if (!Array.isArray(parsed?.users)) return [];
-    return parsed.users;
-  } catch {
-    return [];
-  }
+  return parseUsers(raw);
 }
 
 export async function findUser(email: string): Promise<StoredUser | null> {

@@ -122,6 +122,12 @@ async function list() {
   }
 }
 
+async function exportEnv() {
+  const data = await loadFile();
+  // Compact single-line JSON suitable for the AUTH_USERS env var on Vercel.
+  process.stdout.write(JSON.stringify(data) + "\n");
+}
+
 const [command, ...args] = process.argv.slice(2);
 
 switch (command) {
@@ -134,6 +140,9 @@ switch (command) {
   case "list":
     await list();
     break;
+  case "export":
+    await exportEnv();
+    break;
   default:
     console.log(`PIDFlow user management
 
@@ -141,9 +150,11 @@ Commands:
   add    <email> <name> [password]   Add or update a user (prompts if password omitted)
   remove <email>                     Remove a user
   list                               List all registered users
+  export                             Print AUTH_USERS env value (paste into Vercel)
 
 Examples:
   node scripts/manage-users.mjs add jane@plansrow.com "Jane Doe" "s3cure-pass"
-  node scripts/manage-users.mjs list`);
+  node scripts/manage-users.mjs list
+  node scripts/manage-users.mjs export`);
     if (command) process.exit(1);
 }
