@@ -6,6 +6,7 @@ import { Loader2, Lock, Mail, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { createClient } from "@/lib/supabase/client";
 
 // Only allow internal, single-slash-prefixed paths to prevent open redirects.
 function safeRedirect(from: string | null): string {
@@ -29,18 +30,25 @@ export function LoginForm() {
     setError(null);
     setSubmitting(true);
     try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+      const supabase = createClient();
+      const { data, error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
       });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) {
-        setError(data?.error ?? "Sign in failed. Please try again.");
+      if (signInError) {
+        setError(
+          signInError.message === "Invalid login credentials"
+            ? "Invalid email or password."
+            : signInError.message
+        );
         setSubmitting(false);
         return;
       }
-      toast.success(`Welcome back, ${data?.user?.name ?? "there"}`);
+      const name =
+        (data.user?.user_metadata?.name as string | undefined) ??
+        data.user?.email ??
+        "there";
+      toast.success(`Welcome back, ${name}`);
       router.push(destination);
       router.refresh();
     } catch {

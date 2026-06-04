@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { LogOut, User } from "lucide-react";
 import { toast } from "sonner";
+import { createClient } from "@/lib/supabase/client";
 
 interface SessionUser {
   email: string;
@@ -17,10 +18,23 @@ export function AccountMenu() {
 
   useEffect(() => {
     let active = true;
-    fetch("/api/auth/me")
-      .then((r) => (r.ok ? r.json() : { user: null }))
-      .then((data) => {
-        if (active) setUser(data?.user ?? null);
+    const supabase = createClient();
+    supabase.auth
+      .getUser()
+      .then(({ data }) => {
+        if (!active) return;
+        const authUser = data.user;
+        if (!authUser) {
+          setUser(null);
+          return;
+        }
+        setUser({
+          email: authUser.email ?? "",
+          name:
+            (authUser.user_metadata?.name as string | undefined) ??
+            authUser.email ??
+            "",
+        });
       })
       .catch(() => {
         if (active) setUser(null);
@@ -33,7 +47,8 @@ export function AccountMenu() {
   async function handleLogout() {
     setLoggingOut(true);
     try {
-      await fetch("/api/auth/logout", { method: "POST" });
+      const supabase = createClient();
+      await supabase.auth.signOut();
       toast.success("Signed out");
       router.push("/login");
       router.refresh();
@@ -45,7 +60,7 @@ export function AccountMenu() {
 
   if (!user) return null;
 
-  const initials = user.name
+  const initials = (user.name || user.email)
     .split(" ")
     .map((p) => p[0])
     .filter(Boolean)
