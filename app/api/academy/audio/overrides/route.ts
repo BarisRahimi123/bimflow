@@ -5,7 +5,7 @@ import { audioObjectPath } from "@/lib/academy/audio-overrides";
 import {
   getSupabaseAdmin,
   hasSupabaseServiceRole,
-  uploadAudioObject,
+  createAudioUploadUrl,
 } from "@/lib/supabase/admin";
 
 const TABLE = "academy_audio_tracks";
@@ -21,26 +21,53 @@ export async function GET() {
   return NextResponse.json(keys);
 }
 
-// Admin only: append a new narration track to a target (document or folder
-// overview). Multiple tracks per target are allowed; each gets its own object.
+// Admin only — phase 1 (sign): the file bytes are NOT sent here. The browser
+// uploads them straight to Supabase Storage using the returned signed upload
+// URL, which avoids the serverless request-body limit (Vercel caps it at
+// ~4.5 MB and rejects larger uploads with HTTP 413). We just mint the path.
 export async function POST(request: NextRequest) {
   const adminEmail = await requireAdmin();
   if (!adminEmail) return NextResponse.json({ error: "Forbidden." }, { status: 403 });
   if (!hasSupabaseServiceRole())
     return NextResponse.json({ error: "Storage not configured." }, { status: 500 });
 
-  const form = await request.formData();
-  const targetKey = String(form.get("targetKey") ?? "").trim();
-  const file = form.get("file");
-  const labelInput = String(form.get("label") ?? "").trim();
+  const body = await request.json().catch(() => ({}));
+  const targetKey = String(body?.targetKey ?? "").trim();
+  const fileName = String(body?.fileName ?? "").trim();
+  const contentType = String(body?.contentType ?? "audio/mpeg");
 
   if (!targetKey) return NextResponse.json({ error: "Missing targetKey." }, { status: 400 });
-  if (!(file instanceof File))
-    return NextResponse.json({ error: "Missing file." }, { status: 400 });
-
-  const contentType = file.type || "audio/mpeg";
   if (!contentType.startsWith("audio/"))
     return NextResponse.json({ error: "File must be an audio file." }, { status: 400 });
+
+  const ext = (fileName.split(".").pop() || "mp3").toLowerCase();
+  const objectPath = audioObjectPath(targetKey, ext, randomUUID());
+
+  const signed = await createAudioUploadUrl(objectPath);
+  if (!signed)
+    return NextResponse.json({ error: "Could not create upload URL." }, { status: 500 });
+
+  return NextResponse.json({ objectPath, path: signed.path, token: signed.token });
+}
+
+// Admin only — phase 2 (finalize): after the browser finishes the direct
+// upload, it calls this with the small JSON metadata so we record the track.
+export async function PUT(request: NextRequest) {
+  const adminEmail = await requireAdmin();
+  if (!adminEmail) return NextResponse.json({ error: "Forbidden." }, { status: 403 });
+  if (!hasSupabaseServiceRole())
+    return NextResponse.json({ error: "Storage not configured." }, { status: 500 });
+
+  const body = await request.json().catch(() => ({}));
+  const targetKey = String(body?.targetKey ?? "").trim();
+  const objectPath = String(body?.objectPath ?? "").trim();
+  const contentType = String(body?.contentType ?? "audio/mpeg");
+  const size = Number(body?.size ?? 0) || 0;
+  const labelInput = String(body?.label ?? "").trim();
+  const fileName = String(body?.fileName ?? "").trim();
+
+  if (!targetKey || !objectPath)
+    return NextResponse.json({ error: "Missing targetKey or objectPath." }, { status: 400 });
 
   const supabase = getSupabaseAdmin();
 
@@ -54,15 +81,8 @@ export async function POST(request: NextRequest) {
     .maybeSingle();
   const position = (existing?.position ?? -1) + 1;
 
-  const ext = (file.name.split(".").pop() || "mp3").toLowerCase();
-  const objectPath = audioObjectPath(targetKey, ext, randomUUID());
-  const bytes = new Uint8Array(await file.arrayBuffer());
-
-  const { error: uploadError } = await uploadAudioObject(objectPath, bytes, contentType);
-  if (uploadError)
-    return NextResponse.json({ error: `Upload failed: ${uploadError}` }, { status: 500 });
-
-  const label = labelInput || file.name.replace(/\.[^.]+$/, "") || `Track ${position + 1}`;
+  const label =
+    labelInput || fileName.replace(/\.[^.]+$/, "") || `Track ${position + 1}`;
 
   const { data: inserted, error: insertError } = await supabase
     .from(TABLE)
@@ -71,7 +91,7 @@ export async function POST(request: NextRequest) {
       label,
       object_path: objectPath,
       content_type: contentType,
-      size_bytes: bytes.length,
+      size_bytes: size,
       position,
       updated_at: new Date().toISOString(),
       updated_by: adminEmail,

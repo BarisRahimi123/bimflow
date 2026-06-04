@@ -17,6 +17,7 @@ import { cn } from "@/lib/utils";
 import { useAcademyAudio } from "@/components/academy/audio-context";
 import { useAudioOverrides } from "@/components/academy/audio-overrides-context";
 import { audioTrackUrl, type AudioTrack } from "@/lib/academy/audio-overrides";
+import { uploadAudioTrack } from "@/lib/academy/upload-audio-track";
 
 export interface SettingsDoc {
   targetKey: string;
@@ -77,14 +78,8 @@ export function SettingsClient({
     setError(null);
     setRowBusy(targetKey, true);
     try {
-      const form = new FormData();
-      form.set("targetKey", targetKey);
-      form.set("file", file);
-      const res = await fetch("/api/academy/audio/overrides", { method: "POST", body: form });
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data?.error || `Upload failed (${res.status}).`);
-      }
+      // Bytes upload straight to storage (bypasses the host's body-size limit).
+      await uploadAudioTrack(targetKey, file);
       await sync();
     } catch (e) {
       setError(e instanceof Error ? e.message : "Upload failed.");

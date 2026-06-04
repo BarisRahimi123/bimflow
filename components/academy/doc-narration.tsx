@@ -8,6 +8,7 @@ import { isAdminEmail } from "@/lib/academy/admin";
 import { useAcademyAudio } from "@/components/academy/audio-context";
 import { useAudioOverrides } from "@/components/academy/audio-overrides-context";
 import { audioTrackUrl, type AudioTrack } from "@/lib/academy/audio-overrides";
+import { uploadAudioTrack } from "@/lib/academy/upload-audio-track";
 
 interface PlayableTrack {
   key: string;
@@ -84,11 +85,8 @@ export function DocNarration({
   async function onPick(file: File) {
     setBusy(true);
     try {
-      const form = new FormData();
-      form.set("targetKey", targetKey);
-      form.set("file", file);
-      const res = await fetch("/api/academy/audio/overrides", { method: "POST", body: form });
-      if (!res.ok) throw new Error();
+      // Bytes upload straight to storage (bypasses the host's body-size limit).
+      await uploadAudioTrack(targetKey, file);
       await Promise.all([loadTracks(), refresh()]);
     } catch {
       // Swallow: row stays as-is on failure.

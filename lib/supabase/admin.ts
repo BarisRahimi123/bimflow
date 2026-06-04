@@ -57,6 +57,20 @@ export async function deleteAudioObject(objectPath: string): Promise<void> {
   await getSupabaseAdmin().storage.from(AUDIO_BUCKET).remove([objectPath]);
 }
 
+// Creates a one-time signed URL the browser can upload an audio object to
+// DIRECTLY (bypassing the host's serverless request-body limit, e.g. Vercel's
+// 4.5 MB cap). Returns the storage path + token for `uploadToSignedUrl`.
+export async function createAudioUploadUrl(
+  objectPath: string,
+): Promise<{ path: string; token: string } | null> {
+  if (!hasSupabaseServiceRole()) return null;
+  const { data, error } = await getSupabaseAdmin()
+    .storage.from(AUDIO_BUCKET)
+    .createSignedUploadUrl(objectPath, { upsert: true });
+  if (error || !data) return null;
+  return { path: data.path, token: data.token };
+}
+
 // Creates a short-lived signed URL for a narration audio object. Returns null
 // when the key isn't configured or the object can't be signed.
 export async function createAudioSignedUrl(
