@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { notFound } from "next/navigation";
@@ -14,10 +14,15 @@ import {
   FileText,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { createClient } from "@/lib/supabase/client";
+import { isAdminEmail } from "@/lib/academy/admin";
 import { getDocByKey, getDocNeighbors, getFolder } from "@/lib/academy/library";
 import { useReviewed } from "@/components/academy/reviewed-context";
+import { useAcademyAudio } from "@/components/academy/audio-context";
+import { useCueAuthoring } from "@/components/academy/cue-authoring-context";
 import { DocNarration } from "@/components/academy/doc-narration";
-import { docTargetKey } from "@/lib/academy/audio-overrides";
+import { CueRail } from "@/components/academy/cue-rail";
+import { docTargetKey, pageForTime } from "@/lib/academy/audio-overrides";
 
 const PDFViewer = dynamic(() => import("@/components/PDFViewer"), { ssr: false });
 const SpreadsheetViewer = dynamic(() => import("@/components/academy/SpreadsheetViewer"), {
@@ -41,7 +46,71 @@ export default function DocPage({ params }: { params: { docKey: string } }) {
   const isSpreadsheet = SPREADSHEET_TYPES.has(fileType);
   const isDocx = fileType === "docx";
   const docId = doc.documentId ?? doc.id;
-  const [page] = useState(1);
+
+  // PDF page coordination: `navPage` is what we ask the viewer to show (driven
+  // by narration cues); `viewerPage` is the sheet currently centered (drives the
+  // cue "Mark" button). `totalPages` bounds the cue page inputs.
+  const [navPage, setNavPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  const { track, time } = useAcademyAudio();
+  const cue = useCueAuthoring();
+  const { begin: cueBegin, end: cueEnd, setViewerPage: setCueViewerPage } = cue;
+
+  useEffect(() => {
+    createClient()
+      .auth.getUser()
+      .then(({ data }) => setIsAdmin(isAdminEmail(data.user?.email)))
+      .catch(() => setIsAdmin(false));
+  }, []);
+
+  // Does the playing narration belong to THIS document and carry cues?
+  const activeTrack =
+    track?.docKey === key && track?.trackId ? track : null;
+  const hasCues = (activeTrack?.cues?.length ?? 0) > 0;
+  const authorable = isAdmin && isPdf && !!activeTrack?.trackId;
+
+  // Register / tear down the cue-authoring session (drives the left rail + the
+  // player's Mark button) as the admin plays an uploaded track on this PDF.
+  useEffect(() => {
+    if (authorable && activeTrack?.trackId) {
+      cueBegin({
+        trackId: activeTrack.trackId,
+        label: activeTrack.title,
+        totalPages,
+        cues: activeTrack.cues ?? [],
+      });
+    } else {
+      cueEnd();
+    }
+  }, [
+    authorable,
+    activeTrack?.trackId,
+    activeTrack?.title,
+    activeTrack?.cues,
+    totalPages,
+    cueBegin,
+    cueEnd,
+  ]);
+
+  // Jump the PDF when a cue is clicked in the rail.
+  useEffect(() => {
+    if (cue.jump) setNavPage(cue.jump.page);
+  }, [cue.jump]);
+
+  // Auto-follow: as the narration plays, jump the PDF to the cued sheet. Paused
+  // while the admin has the authoring rail open (so they can scroll freely).
+  useEffect(() => {
+    if (cue.open || !hasCues) return;
+    const p = pageForTime(activeTrack?.cues, time);
+    if (p && p !== navPage) setNavPage(p);
+  }, [time, cue.open, hasCues, activeTrack?.cues, navPage]);
+
+  const handleCurrentPage = useCallback(
+    (n: number) => setCueViewerPage(n),
+    [setCueViewerPage],
+  );
 
   return (
     <div className="flex h-[calc(100vh-3.5rem)] flex-col">
@@ -80,6 +149,7 @@ export default function DocPage({ params }: { params: { docKey: string } }) {
             title={doc.title}
             docKey={key}
             defaultSrc={doc.audioSrc}
+            syncable={isPdf}
           />
           <a
             href={`/api/documents/${docId}?download=true`}
@@ -91,15 +161,23 @@ export default function DocPage({ params }: { params: { docKey: string } }) {
       </div>
 
       {/* Body */}
-      <div className="min-h-0 flex-1">
+      <div className="flex min-h-0 flex-1">
+        {/* Narration → sheet cue rail (admin, PDF, active uploaded track) */}
+        <CueRail />
         {isPdf ? (
-          <PDFViewer documentId={docId} page={page} className="h-full" />
+          <PDFViewer
+            documentId={docId}
+            page={navPage}
+            onPageCount={setTotalPages}
+            onCurrentPage={handleCurrentPage}
+            className="h-full min-w-0 flex-1"
+          />
         ) : isSpreadsheet ? (
-          <SpreadsheetViewer documentId={docId} className="h-full" />
+          <SpreadsheetViewer documentId={docId} className="h-full min-w-0 flex-1" />
         ) : isDocx ? (
-          <DocxViewer documentId={docId} className="h-full" />
+          <DocxViewer documentId={docId} className="h-full min-w-0 flex-1" />
         ) : (
-          <div className="flex h-full flex-col items-center justify-center gap-4 p-10 text-center">
+          <div className="flex h-full min-w-0 flex-1 flex-col items-center justify-center gap-4 p-10 text-center">
             <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-accent">
               <FileText className="h-7 w-7 text-accent-foreground" />
             </div>

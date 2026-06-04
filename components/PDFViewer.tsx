@@ -18,6 +18,8 @@ interface PDFViewerProps {
   page: number;
   searchText?: string;
   onPageCount?: (n: number) => void;
+  /** Fires with the sheet currently centered in the viewport. */
+  onCurrentPage?: (n: number) => void;
   className?: string;
 }
 
@@ -26,6 +28,7 @@ export default function PDFViewer({
   page,
   searchText,
   onPageCount,
+  onCurrentPage,
   className,
 }: PDFViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -120,6 +123,11 @@ export default function PDFViewer({
       8;
     scroller.scrollTo({ top: Math.max(0, top), behavior });
   }, []);
+
+  // Surface the centered sheet to the parent (drives the cue "Mark" button).
+  useEffect(() => {
+    onCurrentPage?.(currentPage);
+  }, [currentPage, onCurrentPage]);
 
   // --- Sync external page prop → scroll to that page ---
   useEffect(() => {

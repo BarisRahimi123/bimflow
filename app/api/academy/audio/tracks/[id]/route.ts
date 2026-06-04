@@ -5,10 +5,13 @@ import {
   hasSupabaseServiceRole,
   deleteAudioObject,
 } from "@/lib/supabase/admin";
+import { normalizeCues } from "@/lib/academy/audio-overrides";
 
 const TABLE = "academy_audio_tracks";
 
-// Admin only: rename a narration track.
+// Admin only: update a narration track's label and/or its page-sync cues.
+// Either field may be sent on its own (`label` for rename, `cues` for the
+// sync editor).
 export async function PATCH(
   request: NextRequest,
   { params }: { params: { id: string } },
@@ -19,16 +22,31 @@ export async function PATCH(
     return NextResponse.json({ error: "Storage not configured." }, { status: 500 });
 
   const body = await request.json().catch(() => ({}));
-  const label = String(body?.label ?? "").trim();
-  if (!label) return NextResponse.json({ error: "Missing label." }, { status: 400 });
+  const hasLabel = body?.label !== undefined;
+  const hasCues = body?.cues !== undefined;
+
+  const update: Record<string, unknown> = {
+    updated_at: new Date().toISOString(),
+    updated_by: adminEmail,
+  };
+
+  if (hasLabel) {
+    const label = String(body.label ?? "").trim();
+    if (!label) return NextResponse.json({ error: "Missing label." }, { status: 400 });
+    update.label = label;
+  }
+  if (hasCues) update.cues = normalizeCues(body.cues);
+
+  if (!hasLabel && !hasCues)
+    return NextResponse.json({ error: "Nothing to update." }, { status: 400 });
 
   const { error } = await getSupabaseAdmin()
     .from(TABLE)
-    .update({ label, updated_at: new Date().toISOString(), updated_by: adminEmail })
+    .update(update)
     .eq("id", params.id);
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({ ok: true, cues: hasCues ? update.cues : undefined });
 }
 
 // Admin only: delete a narration track (storage object + row).

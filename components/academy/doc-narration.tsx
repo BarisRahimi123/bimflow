@@ -1,19 +1,37 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown, Headphones, Loader2, Pause, Play, Plus } from "lucide-react";
+import {
+  ChevronDown,
+  Headphones,
+  Loader2,
+  MapPin,
+  Pause,
+  Play,
+  Plus,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
 import { isAdminEmail } from "@/lib/academy/admin";
 import { useAcademyAudio } from "@/components/academy/audio-context";
 import { useAudioOverrides } from "@/components/academy/audio-overrides-context";
-import { audioTrackUrl, type AudioTrack } from "@/lib/academy/audio-overrides";
-import { uploadAudioTrack } from "@/lib/academy/upload-audio-track";
+import {
+  audioTrackUrl,
+  type AudioCue,
+  type AudioTrack,
+} from "@/lib/academy/audio-overrides";
+import {
+  promoteBuiltinTrack,
+  uploadAudioTrack,
+} from "@/lib/academy/upload-audio-track";
 
 interface PlayableTrack {
   key: string;
   label: string;
   src: string;
+  /** uploaded-track id (absent for built-in narration) */
+  trackId?: string;
+  cues?: AudioCue[];
 }
 
 // Doc-page narration control. Plays the document's narration and, when it has
@@ -24,11 +42,14 @@ export function DocNarration({
   title,
   docKey,
   defaultSrc,
+  syncable = false,
 }: {
   targetKey: string;
   title: string;
   docKey: string;
   defaultSrc?: string;
+  /** PDF docs only: admins can promote built-in narration to enable cue sync. */
+  syncable?: boolean;
 }) {
   const { play, toggle, track, playing } = useAcademyAudio();
   const { refresh } = useAudioOverrides();
@@ -36,6 +57,7 @@ export function DocNarration({
   const [isAdmin, setIsAdmin] = useState(false);
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [syncing, setSyncing] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const wrapRef = useRef<HTMLDivElement | null>(null);
 
@@ -75,7 +97,13 @@ export function DocNarration({
   // Uploaded tracks replace the built-in narration; otherwise fall back to it.
   const sources: PlayableTrack[] =
     tracks.length > 0
-      ? tracks.map((t) => ({ key: t.id, label: t.label, src: audioTrackUrl(t.id) }))
+      ? tracks.map((t) => ({
+          key: t.id,
+          label: t.label,
+          src: audioTrackUrl(t.id),
+          trackId: t.id,
+          cues: t.cues ?? [],
+        }))
       : defaultSrc
         ? [{ key: "__default", label: "Narration", src: defaultSrc }]
         : [];
@@ -95,9 +123,55 @@ export function DocNarration({
     }
   }
 
+  // Copy the built-in narration into a managed track (gains a trackId → cue
+  // authoring works), then auto-play it so the rail + Mark button appear.
+  async function onEnableSync() {
+    if (!defaultSrc) return;
+    setSyncing(true);
+    try {
+      const created = await promoteBuiltinTrack(targetKey, defaultSrc);
+      await Promise.all([loadTracks(), refresh()]);
+      play({
+        src: audioTrackUrl(created.id),
+        title,
+        docKey,
+        trackId: created.id,
+        cues: [],
+      });
+    } catch {
+      // Swallow: built-in narration keeps working unchanged on failure.
+    } finally {
+      setSyncing(false);
+    }
+  }
+
+  // Built-in narration not yet promoted → offer the one-click sync enabler.
+  const SyncButton =
+    isAdmin && syncable && tracks.length === 0 && defaultSrc ? (
+      <button
+        onClick={onEnableSync}
+        disabled={syncing}
+        title="Copy this narration into a managed track so you can mark page-sync cues"
+        className="inline-flex items-center gap-1.5 rounded-md border border-dashed border-border px-2.5 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-brand/50 hover:text-foreground disabled:opacity-50"
+      >
+        {syncing ? (
+          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+        ) : (
+          <MapPin className="h-3.5 w-3.5" />
+        )}
+        {syncing ? "Enabling…" : "Enable sync"}
+      </button>
+    ) : null;
+
   function playTrack(t: PlayableTrack) {
     setOpen(false);
-    play({ src: t.src, title: sources.length > 1 ? `${title} — ${t.label}` : title, docKey });
+    play({
+      src: t.src,
+      title: sources.length > 1 ? `${title} — ${t.label}` : title,
+      docKey,
+      trackId: t.trackId,
+      cues: t.cues,
+    });
   }
 
   const AddButton = isAdmin ? (
@@ -150,6 +224,7 @@ export function DocNarration({
           )}
           {active && playing ? "Pause narration" : "Play narration"}
         </button>
+        {SyncButton}
         {AddButton}
       </div>
     );

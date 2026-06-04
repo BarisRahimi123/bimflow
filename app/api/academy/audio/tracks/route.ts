@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin, hasSupabaseServiceRole } from "@/lib/supabase/admin";
+import { normalizeCues, type AudioTrack } from "@/lib/academy/audio-overrides";
 
 const TABLE = "academy_audio_tracks";
 
@@ -14,7 +15,7 @@ export async function GET(request: NextRequest) {
 
   let query = getSupabaseAdmin()
     .from(TABLE)
-    .select("id, label, position, target_key")
+    .select("id, label, position, target_key, cues")
     .order("position", { ascending: true })
     .order("updated_at", { ascending: true });
   if (targetKey) query = query.eq("target_key", targetKey);
@@ -23,16 +24,20 @@ export async function GET(request: NextRequest) {
   if (error)
     return NextResponse.json(targetKey ? { tracks: [] } : { byTarget: {} });
 
+  const toTrack = (t: Record<string, unknown>): AudioTrack => ({
+    id: t.id as string,
+    label: t.label as string,
+    cues: normalizeCues(t.cues),
+  });
+
   if (targetKey) {
-    return NextResponse.json({
-      tracks: (data ?? []).map((t) => ({ id: t.id as string, label: t.label as string })),
-    });
+    return NextResponse.json({ tracks: (data ?? []).map(toTrack) });
   }
 
-  const byTarget: Record<string, { id: string; label: string }[]> = {};
+  const byTarget: Record<string, AudioTrack[]> = {};
   for (const t of data ?? []) {
     const key = t.target_key as string;
-    (byTarget[key] ??= []).push({ id: t.id as string, label: t.label as string });
+    (byTarget[key] ??= []).push(toTrack(t));
   }
   return NextResponse.json({ byTarget });
 }

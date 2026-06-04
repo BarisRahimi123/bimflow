@@ -8,6 +8,7 @@ import {
   useRef,
   useState,
 } from "react";
+import type { AudioCue } from "@/lib/academy/audio-overrides";
 
 interface Track {
   src: string;
@@ -15,6 +16,10 @@ interface Track {
   subtitle?: string;
   /** doc key, so the player can deep-link back */
   docKey?: string;
+  /** uploaded-track id, when this came from academy_audio_tracks */
+  trackId?: string;
+  /** manual page-sync cues for this track (drives PDF auto-follow) */
+  cues?: AudioCue[];
 }
 
 interface AudioContextValue {
@@ -30,6 +35,8 @@ interface AudioContextValue {
   setRate: (rate: number) => void;
   rate: number;
   stop: () => void;
+  /** Replace the cues on the currently-loaded track (after admin edits). */
+  setTrackCues: (cues: AudioCue[]) => void;
 }
 
 const Ctx = createContext<AudioContextValue | null>(null);
@@ -121,9 +128,26 @@ export function AcademyAudioProvider({ children }: { children: React.ReactNode }
     setTime(0);
   }, []);
 
+  const setTrackCues = useCallback((cues: AudioCue[]) => {
+    setTrack((cur) => (cur ? { ...cur, cues } : cur));
+  }, []);
+
   return (
     <Ctx.Provider
-      value={{ track, playing, time, duration, play, toggle, seek, skip, setRate, rate, stop }}
+      value={{
+        track,
+        playing,
+        time,
+        duration,
+        play,
+        toggle,
+        seek,
+        skip,
+        setRate,
+        rate,
+        stop,
+        setTrackCues,
+      }}
     >
       {children}
     </Ctx.Provider>

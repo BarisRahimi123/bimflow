@@ -1,12 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { Pause, Play, SkipBack, SkipForward, X, Volume2 } from "lucide-react";
+import { MapPin, Pause, Play, SkipBack, SkipForward, X, Volume2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAcademyAudio, fmtTime } from "@/components/academy/audio-context";
+import { useCueAuthoring } from "@/components/academy/cue-authoring-context";
 
 export function MiniPlayer() {
   const { track, playing, time, duration, toggle, skip, seek, stop } = useAcademyAudio();
+  const cue = useCueAuthoring();
   if (!track) return null;
 
   const pct = duration > 0 ? (time / duration) * 100 : 0;
@@ -46,6 +48,19 @@ export function MiniPlayer() {
         </div>
 
         <div className="flex items-center gap-1">
+          {cue.active && (
+            <>
+              <button
+                onClick={cue.mark}
+                title={`Mark current sheet (${cue.viewerPage}) at ${fmtTime(time)}`}
+                className="mr-1 inline-flex items-center gap-1.5 rounded-md border border-brand/40 bg-brand/10 px-2.5 py-1.5 text-xs font-semibold text-brand transition-colors hover:bg-brand/20"
+              >
+                <MapPin className="h-3.5 w-3.5" />
+                Mark sheet {cue.viewerPage}
+              </button>
+              <span className="mr-1 h-6 w-px bg-border" aria-hidden />
+            </>
+          )}
           <button
             onClick={() => skip(-15)}
             className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-foreground"

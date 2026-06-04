@@ -66,3 +66,25 @@ export async function uploadAudioTrack(
   const data = (await finalizeRes.json()) as { track: UploadedTrack };
   return data.track;
 }
+
+// Promotes a document's built-in (static `/audio/...`) narration into a managed
+// track so it can hold page-sync cues. The bytes are copied server-side from the
+// public file — nothing is uploaded from the browser — so there is no body-size
+// limit to worry about here.
+export async function promoteBuiltinTrack(
+  targetKey: string,
+  src: string,
+  label?: string,
+): Promise<UploadedTrack> {
+  const res = await fetch("/api/academy/audio/promote", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ targetKey, src, label: label ?? "" }),
+  });
+  if (!res.ok) {
+    const msg = await res.json().catch(() => ({}));
+    throw new Error(msg?.error || "Could not enable sync.");
+  }
+  const data = (await res.json()) as { track: UploadedTrack };
+  return data.track;
+}
