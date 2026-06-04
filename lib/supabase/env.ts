@@ -9,8 +9,14 @@ function clean(value: string | undefined, name: string): string {
   if (!value) {
     throw new Error(`Missing required environment variable: ${name}`);
   }
-  // Strip surrounding whitespace, newlines, and any wrapping quotes.
-  return value.trim().replace(/^["']|["']$/g, "").trim();
+  // Strip wrapping quotes, then remove ALL whitespace (including internal
+  // newlines). Pasting a long JWT into a dashboard can inject a line break in
+  // the middle of the value, and newlines are illegal in HTTP header values —
+  // which makes Supabase's fetch throw "Invalid value". A Supabase URL and a
+  // JWT never contain legitimate whitespace, so this is safe.
+  return value
+    .replace(/^\s*["']?|["']?\s*$/g, "")
+    .replace(/\s+/g, "");
 }
 
 export function getSupabaseUrl(): string {
