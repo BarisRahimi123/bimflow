@@ -287,6 +287,16 @@ export function getDocumentEntry(id: string): DocumentEntry | null {
   return DOCUMENT_MANIFEST[id] || null;
 }
 
+// Supabase Storage only accepts S3-safe object keys. Several BIM filenames
+// contain a "•" (U+2022) bullet and other non-ASCII characters that the
+// Storage API rejects with "Invalid key". This maps a manifest relativePath
+// to a safe, deterministic object key. It MUST be used identically by both the
+// uploader and the API route so reads line up with writes. Path separators are
+// preserved; every other unsafe character becomes "_".
+export function toStorageObjectKey(relativePath: string): string {
+  return relativePath.replace(/[^A-Za-z0-9/!\-.*'()&$@=;:+,?_ ]/g, "_");
+}
+
 export function formatFileSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;

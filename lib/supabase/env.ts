@@ -29,3 +29,17 @@ export function getSupabaseAnonKey(): string {
     "NEXT_PUBLIC_SUPABASE_ANON_KEY"
   );
 }
+
+// Server-only. Required to read objects from the private "documents" bucket.
+export function getSupabaseServiceRoleKey(): string {
+  return clean(
+    process.env.SUPABASE_SERVICE_ROLE_KEY,
+    "SUPABASE_SERVICE_ROLE_KEY"
+  );
+}
+
+// Non-throwing check so request handlers can fall back gracefully when the
+// service-role key isn't configured (e.g. local dev serving from disk).
+export function hasSupabaseServiceRole(): boolean {
+  return Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY?.trim());
+}

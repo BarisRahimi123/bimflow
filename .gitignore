@@ -37,8 +37,9 @@ next-env.d.ts
 # prisma
 prisma/migrations/
 
-# large document files (stored separately)
-documents/
+# large document files (stored separately, served from Supabase Storage).
+# Anchored to the repo root so it does NOT also ignore app/api/documents/.
+/documents/
 
 # auth — pre-registered user allowlist (contains password hashes)
 auth/users.json
